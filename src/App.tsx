@@ -1,38 +1,77 @@
 import styled from 'styled-components';
 import './App.css';
+import {useState} from 'react';
+import {Hexagons} from './Hexagon';
 
 const hexsize = 100;
 const colors = ['rgba(150,0,0,0.9)','rgba(0,150,0,0.9)']
 
+/*
+useState hooks are needed to update through style={{}} in html return without 200+ render warning
+so the selectors aren't used in the styled button, which is kind of annoying
+maybe they just need to be two different things, don't control the color with hooks, but keep the hooks anyway
+2 representations for the same thing, is there a way to guarantee they are in sync?
+
+but what selectors will set the hovered ones to active when the mouse is down?
+
+problem with useState is because onMouseEnter is changing all of them
+just make an array, they all have different colors
+---
+
+almost working but it only updates after mouseup, even without using mouseup/down logic
+might need to put the updateColor functionality inside useEffect with a callback?
+wtf is the point of the hooks then if you have to use a separate callback, they are supposed to update as is
+---
+moved to its own component still nothing
+is it because the style doesn't get updated? from the log, it's clear that the state variable is updated
+passing to styled.div works though
+
+
+*/
+
+
+
 function App() {
+const [backgroundColor, setBackgroundColor] = useState<string[]>(Array(25).fill('black'));
+const [isMouseDown, setMouseDown] = useState(false);
+const [isMouseOver, setMouseOver] = useState(Array(25).fill(false));
+
+
+
+const [isActive, setActive] = useState<boolean[]>(Array(25).fill(false));
+
+const updateColor = (id:number, newcolor:string) => {
+  const r = backgroundColor;
+  r[id] = newcolor;
+  setBackgroundColor(r);
+  const q = isActive;
+    q[id] = newcolor == 'white' ? true : false;
+    setActive(q);
+  console.log(isActive);
+}
+  
+
+
   return (
-    <div className="App">
+    <div className="App" onMouseDown={() => setMouseDown(true)} onMouseUp={() => setMouseDown(false)}>
       <header className="App-header">
-        {[...Array(20)].map((x, i) =>
-          [...Array(5)].map((y,j) => 
-          <Hexagon left={i*50 - (j%2) * 25} top={75*(j+1)} background={colors[j%2]}/>
-    ))}
+    <Hexagons isMouseDown={isMouseDown}/>
+      <Rules/>
      </header>
 
     </div>
   );
 }
 
-const Hexagon = styled.button.attrs((props : {top : number, left : number, background : string}) => props)`
-  position: absolute;
-  width: ${hexsize}px;
-  height: 50px;
-  background: ${props => props.background};
-  border: none;
-  outline: none;
-  top: calc(${props => props.top} * 1px);
-  left: calc(${props => props.left} * 1px);
-  clip-path: polygon(0% 50%, 25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%);
-transform: rotateZ(90deg);
-  &:active {
-    filter: hue-rotate(30deg);
-  }
-`
 
+const Rules = styled.input`
+  position: absolute;
+  width: 100px;
+  height: 20px;
+  right: 100px;
+  top: 20px;
+  background: black;
+  color: white;
+`
 
 export default App;
