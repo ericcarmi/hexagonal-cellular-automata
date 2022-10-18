@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import './App.css';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {Hexagons} from './Hexagon';
 
 const hexsize = 100;
@@ -32,23 +32,7 @@ passing to styled.div works though
 
 
 function App() {
-const [backgroundColor, setBackgroundColor] = useState<string[]>(Array(25).fill('black'));
-const [isMouseDown, setMouseDown] = useState(false);
-const [isMouseOver, setMouseOver] = useState(Array(25).fill(false));
-
-
-
-const [isActive, setActive] = useState<boolean[]>(Array(25).fill(false));
-
-const updateColor = (id:number, newcolor:string) => {
-  const r = backgroundColor;
-  r[id] = newcolor;
-  setBackgroundColor(r);
-  const q = isActive;
-    q[id] = newcolor == 'white' ? true : false;
-    setActive(q);
-  console.log(isActive);
-}
+  const [isMouseDown, setMouseDown] = useState(false);
   
 
 
@@ -56,15 +40,22 @@ const updateColor = (id:number, newcolor:string) => {
     <div className="App" onMouseDown={() => setMouseDown(true)} onMouseUp={() => setMouseDown(false)}>
       <header className="App-header">
     <Hexagons isMouseDown={isMouseDown}/>
-      <Rules/>
+      <RulesInput/>
+    <Rules> rules </Rules>
+      <RowsInput/>
+    <Rows> rows </Rows>
+      <ColsInput/>
+    <Cols> cols </Cols>
+      <IntervalInput/>
+    <Interval onChange = {event => console.log(event.target)}> interval </Interval>
      </header>
 
     </div>
   );
 }
 
-
-const Rules = styled.input`
+// rules are entered as a list
+const RulesInput = styled.input`
   position: absolute;
   width: 100px;
   height: 20px;
@@ -73,5 +64,72 @@ const Rules = styled.input`
   background: black;
   color: white;
 `
+const Rules = styled.div`
+  position: absolute;
+  width: 100px;
+  height: 20px;
+  right: 200px;
+  top: 10px;
+  color: white;
+`
+
+// number of ros
+const RowsInput = styled.input`
+  position: absolute;
+  width: 100px;
+  height: 20px;
+  right: 100px;
+  top: 60px;
+  background: black;
+  color: white;
+`
+const Rows = styled.div`
+  position: absolute;
+  width: 100px;
+  height: 20px;
+  right: 200px;
+  top: 50px;
+  color: white;
+`
+
+// number of columns
+const ColsInput = styled.input`
+  position: absolute;
+  width: 100px;
+  height: 20px;
+  right: 100px;
+  top: 100px;
+  background: black;
+  color: white;
+`
+
+const Cols = styled.div`
+  position: absolute;
+  width: 100px;
+  height: 20px;
+  right: 200px;
+  top: 90px;
+  color: white;
+`
+
+// update interal
+const IntervalInput = styled.input`
+  position: absolute;
+  width: 100px;
+  height: 20px;
+  right: 100px;
+  top: 140px;
+  background: black;
+  color: white;
+`
+const Interval = styled.div`
+  position: absolute;
+  width: 100px;
+  height: 20px;
+  right: 200px;
+  top: 130px;
+  color: white;
+`
+
 
 export default App;
