@@ -4,6 +4,75 @@ import {useState, useEffect} from 'react';
 const hexsize = 50;
 const colors = ['rgba(150,0,0,0.9)','rgba(0,150,0,0.9)']
 
+const rules = 
+{
+  "000000" : "1",
+  "000001" : "1",
+  "000010" : "0",
+  "000011" : "0",
+  "000100" : "0",
+  "000101" : "0",
+  "000110" : "0",
+  "000111" : "0",
+  "001000" : "0",
+  "001001" : "0",
+  "001010" : "0",
+  "001011" : "0",
+  "001100" : "0",
+  "001101" : "0",
+  "001110" : "0",
+  "001111" : "0",
+  "010000" : "0",
+  "010001" : "0",
+  "010010" : "0",
+  "010011" : "0",
+  "010100" : "0",
+  "010101" : "0",
+  "010110" : "0",
+  "010111" : "0",
+  "011000" : "0",
+  "011001" : "0",
+  "011010" : "0",
+  "011011" : "0",
+  "011100" : "0",
+  "011101" : "0",
+  "011110" : "0",
+  "011111" : "0",
+  "100000" : "0",
+  "100001" : "0",
+  "100010" : "0",
+  "100011" : "0",
+  "100100" : "1",
+  "100101" : "0",
+  "100110" : "0",
+  "100111" : "0",
+  "101000" : "0",
+  "101001" : "0",
+  "101010" : "0",
+  "101011" : "0",
+  "101100" : "0",
+  "101101" : "0",
+  "101110" : "0",
+  "101111" : "0",
+  "110000" : "0",
+  "110001" : "0",
+  "110010" : "0",
+  "110011" : "0",
+  "110100" : "0",
+  "110101" : "0",
+  "110110" : "0",
+  "110111" : "0",
+  "111000" : "0",
+  "111001" : "0",
+  "111010" : "0",
+  "111011" : "0",
+  "111100" : "0",
+  "111101" : "0",
+  "111110" : "0",
+  "111111" : "0",
+}
+
+
 
 interface IHexagons {
   isMouseDown? : boolean,
@@ -19,26 +88,37 @@ export const Hexagons = ({isMouseDown, numrows}:IHexagons) => {
 
   const [backgroundColor, setBackgroundColor] = useState<string[]>(Array(numhex).fill('black'));
   const [isActive, setActive] = useState<boolean[]>(Array(numhex).fill(false));
+  // maybe rename activeCells - these are the cells to iterate over, a list that is supposed to grow and shrink...currently not shrinking
   const [activeCells, setActiveCells] = useState<number[]>([]);
   const [shouldIterate, setShouldIterate] = useState(false);
 
   const updateColor = (id:number, newcolor:string) => {
     const r = backgroundColor;
     r[id] = newcolor;
-    setBackgroundColor({...r}); 
+    setBackgroundColor([...r]); 
     const q = isActive;
     q[id] = r[id] === 'white' ? true : false;
-    setActive({...q});
+    setActive([...q]);
 
 
-    if(q[id] && !activeCells.includes(id)) { // if q is true, add this cell to the list
-      // console.log('add');
-      setActiveCells(old => [...old, id]);
-    }
-    else if(!q[id] && activeCells.includes(id)) {
-      // console.log('remove');
-      setActiveCells(old => [...old.filter(i => i !== id)]);
-    }
+    const cells: Array<number> = [];
+    q.map((val,i) => {
+       if(val){
+        cells.push(i);
+      }
+      }
+    );
+  setActiveCells(cells);
+    console.log(id,activeCells );
+
+    // if(q[id] && !activeCells.includes(id)) { // if q is true, add this cell to the list
+    //   console.log('add');
+    //   setActiveCells([...activeCells, id]);
+    // }
+    // else if(!q[id] && activeCells.includes(id)) {
+    //   console.log('remove');
+    //   setActiveCells(activeCells.filter(i => i !== id));
+    // }
 
     // console.log(newcolor, id, activeCells);
     
@@ -74,49 +154,14 @@ export const Hexagons = ({isMouseDown, numrows}:IHexagons) => {
   
   */
 
-  const checkNeighbors = (row: number, col: number) => {
-    // use i for rows, j for columns?  no it's the other way around
-    // up is always -2, down is always +2
-    const id = col*numcols + row // the unique id/key
-    const shifts = [2,-2]
-
-    // numbers will need to be updated later relative to numrows/numcols
-    if( row % 2 === 0 ) { // even
-      // u-r : -1
-      // u-l : -21
-      // d-l : -19
-      // d-r : +1
-      shifts.push(-1, -21, -19, 1)
-    }
-    else { // odd
-      // u-r : +19
-      // u-l : -1
-      // d-l : +1
-      // d-r : +21
-      shifts.push(19, -1, 1, 21)
-    }
-
-    const neighborsToCheck = shifts.map((i) => i + id)
-    // console.log(neighborsToCheck);
-    activeCells.map((i) => {
-      console.log(i);
-      if(i >= 0) {
-        // console.log(isActive[i]);
-        // go through all activeCells, check shifts in neighborsToCheck
-        
-      }
-    })
-    
-    
-  }
 
   // or you don't need to pass row,col? just figure it out by the number in activeCell? just even or odd
   useEffect(() => {
     if(shouldIterate){
     const interval = setInterval(() => {
 
-      const nextActiveCells: Array<number> = [];
-      const nextDeadCells: Array<number> = [];
+      let nextActiveCells: Array<number> = [];
+      let nextDeadCells: Array<number> = [];
       activeCells.map((i) => {
         const shifts = [-2] // format: up, ur, dr, dn, dl, dr, needs to communicate properly with format of rule
         // is this fixed with recognizing it as a symmetry? many formats are possible
@@ -138,39 +183,47 @@ export const Hexagons = ({isMouseDown, numrows}:IHexagons) => {
         // check if shifts are positive and smaller than max
 
         let stayAlive = 0;
+        let neighbors = '';
 
-        shifts.map((s) => {
+        shifts.map((s,index) => {
           const a = s + i;
           if(a > 0 && a < numrows*numcols && isActive[a]){
-            stayAlive += 1;
+            stayAlive += 2**index;
+              neighbors += '1';
+          }
+          else{
+            neighbors += '0';
+          }
+          // console.log(stayAlive, neighbors);
+          if(rules[neighbors as keyof typeof rules] == '0') { 
+              nextDeadCells.push(a);
+          }
+          else {
+              nextActiveCells.push(a);
           }
 
         })
-        console.log(stayAlive);
-        // apply the rule
-        if(stayAlive !== 3) { // vary this based on index for different boundary conditions, maybe boundaries could stay alive with less (reflective?)
-          // updateColor(i, 'black');
-            nextDeadCells.push(i);
-        }
-        else {
-          // updateColor(i, 'white');
-            nextActiveCells.push(i);
-        }
-        // console.log(i,shifts);
 
       })
       nextActiveCells.map((i) => {
+          if(i > 0)
           updateColor(i,'white');
       })
       nextDeadCells.map((i) => {
+          if(i > 0)
           updateColor(i,'black');
       })
+
+        // nextActiveCells=[];
+        // nextDeadCells=[];
+
+      // console.log(activeCells);
         
         
-    },1000);
+    },100);
     return () => clearInterval(interval);
     }
-  },[activeCells, isActive, shouldIterate])
+  },[activeCells, isActive, shouldIterate, updateColor])
   
 
   return(
@@ -207,7 +260,7 @@ export const Hexagons = ({isMouseDown, numrows}:IHexagons) => {
   
       ))}
       <ResetButton onClick={resetAll}/>
-      <StartButton onClick={() => setShouldIterate(!shouldIterate)}/>
+      <StartButton isIterating={shouldIterate} onClick={() => setShouldIterate(!shouldIterate)}/>
       </Grid>
   );
 }
@@ -273,21 +326,23 @@ const ResetButton = styled.div`
 
 
 `
-const StartButton = styled.div`
+const StartButton = styled.div<{isIterating: boolean}>`
   width: 30px;
   height: 30px;
   border-radius: 15px;
-  background: rgb(0,150,0);
+  background: ${p => p.isIterating ? 'rgb(0,150,0)' : 'rgb(150,50,0)'};
   transition: background 0.1s;
   position: absolute;
   left: 60%;
   top: 1%;
   cursor: pointer;
+
   &:hover{
-    background: rgb(0,225,0);
+    background: ${p => p.isIterating ? 'rgb(0,180,0)' : 'rgb(180,80,0)'};
   }  
+
   &:active{
-    background: rgb(0,255,0);
+    ${p => p.isIterating ? 'rgb(0,220,0)' : 'rgb(220,110,0)'};
   }  
 
 
