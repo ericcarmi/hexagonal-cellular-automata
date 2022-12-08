@@ -19,15 +19,28 @@ export const Hexagons = ({isMouseDown, numrows}:IHexagons) => {
 
   const [backgroundColor, setBackgroundColor] = useState<string[]>(Array(numhex).fill('black'));
   const [isActive, setActive] = useState<boolean[]>(Array(numhex).fill(false));
-  const [activeCells, setActiveCells] = useState([]);
+  const [activeCells, setActiveCells] = useState<number[]>([]);
+  const [shouldIterate, setShouldIterate] = useState(false);
 
   const updateColor = (id:number, newcolor:string) => {
     const r = backgroundColor;
     r[id] = newcolor;
-    setBackgroundColor({...r}); // need to use ({...r})
+    setBackgroundColor({...r}); 
     const q = isActive;
-    q[id] = newcolor == 'white' ? true : false;
+    q[id] = r[id] === 'white' ? true : false;
     setActive({...q});
+
+
+    if(q[id] && !activeCells.includes(id)) { // if q is true, add this cell to the list
+      // console.log('add');
+      setActiveCells(old => [...old, id]);
+    }
+    else if(!q[id] && activeCells.includes(id)) {
+      // console.log('remove');
+      setActiveCells(old => [...old.filter(i => i !== id)]);
+    }
+
+    // console.log(newcolor, id, activeCells);
     
   }
   
@@ -36,6 +49,7 @@ export const Hexagons = ({isMouseDown, numrows}:IHexagons) => {
     setBackgroundColor({...r});
     const q = Array(numhex).fill(false);
     setActive({...q});
+    setActiveCells([]);
   }
   
 
@@ -65,7 +79,8 @@ export const Hexagons = ({isMouseDown, numrows}:IHexagons) => {
     // up is always -2, down is always +2
     const id = col*numcols + row // the unique id/key
     const shifts = [2,-2]
-    
+
+    // numbers will need to be updated later relative to numrows/numcols
     if( row % 2 === 0 ) { // even
       // u-r : -1
       // u-l : -21
@@ -82,10 +97,12 @@ export const Hexagons = ({isMouseDown, numrows}:IHexagons) => {
     }
 
     const neighborsToCheck = shifts.map((i) => i + id)
-    console.log(neighborsToCheck);
-    neighborsToCheck.map((i) => {
+    // console.log(neighborsToCheck);
+    activeCells.map((i) => {
+      console.log(i);
       if(i >= 0) {
-        console.log(isActive[i]);
+        // console.log(isActive[i]);
+        // go through all activeCells, check shifts in neighborsToCheck
         
       }
     })
@@ -93,12 +110,67 @@ export const Hexagons = ({isMouseDown, numrows}:IHexagons) => {
     
   }
 
+  // or you don't need to pass row,col? just figure it out by the number in activeCell? just even or odd
   useEffect(() => {
+    if(shouldIterate){
     const interval = setInterval(() => {
-      // checkNeighbors;
-    },100);
+
+      const nextActiveCells: Array<number> = [];
+      const nextDeadCells: Array<number> = [];
+      activeCells.map((i) => {
+        const shifts = [-2] // format: up, ur, dr, dn, dl, dr, needs to communicate properly with format of rule
+        // is this fixed with recognizing it as a symmetry? many formats are possible
+        // can format be learned with a different program? some use of logic and statistics (if data can be got)
+        if( i % 2 === 0 ) { // even
+          // u-r : -1
+          // u-l : -21
+          // d-l : -19
+          // d-r : +1
+          shifts.push(-1, 1, 2, -19, -21);
+        }
+        else { // odd
+          // u-r : +19
+          // u-l : -1
+          // d-l : +1
+          // d-r : +21
+          shifts.push(19, 21, 2, 1, -1);
+        }
+        // check if shifts are positive and smaller than max
+
+        let stayAlive = 0;
+
+        shifts.map((s) => {
+          const a = s + i;
+          if(a > 0 && a < numrows*numcols && isActive[a]){
+            stayAlive += 1;
+          }
+
+        })
+        console.log(stayAlive);
+        // apply the rule
+        if(stayAlive !== 3) { // vary this based on index for different boundary conditions, maybe boundaries could stay alive with less (reflective?)
+          // updateColor(i, 'black');
+            nextDeadCells.push(i);
+        }
+        else {
+          // updateColor(i, 'white');
+            nextActiveCells.push(i);
+        }
+        // console.log(i,shifts);
+
+      })
+      nextActiveCells.map((i) => {
+          updateColor(i,'white');
+      })
+      nextDeadCells.map((i) => {
+          updateColor(i,'black');
+      })
+        
+        
+    },1000);
     return () => clearInterval(interval);
-  },[])
+    }
+  },[activeCells, isActive, shouldIterate])
   
 
   return(
@@ -108,7 +180,7 @@ export const Hexagons = ({isMouseDown, numrows}:IHexagons) => {
           <Hexagon key={i*numcols+j} 
             isactive={isActive[i*numcols+j]}
             background={backgroundColor[i*numcols+j]}
-            style={{left:650+i*72 + 36 * (j%2), top:200 + 25*(j+1)}}
+            style={{left:100+i*72 + 36 * (j%2), top:200 + 25*(j+1)}}
             onMouseDown={(e) => {
                   if(e.shiftKey){
                       updateColor(i*numcols+j, 'black');
@@ -116,7 +188,6 @@ export const Hexagons = ({isMouseDown, numrows}:IHexagons) => {
                     else {
                       updateColor(i*numcols+j, 'white');
                     }
-              checkNeighbors(j,i)
                   } }
             onMouseEnter={(e) => { 
                   if(isMouseDown){
@@ -136,6 +207,7 @@ export const Hexagons = ({isMouseDown, numrows}:IHexagons) => {
   
       ))}
       <ResetButton onClick={resetAll}/>
+      <StartButton onClick={() => setShouldIterate(!shouldIterate)}/>
       </Grid>
   );
 }
@@ -197,6 +269,25 @@ const ResetButton = styled.div`
   }  
   &:active{
     background: rgb(255,0,0);
+  }  
+
+
+`
+const StartButton = styled.div`
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  background: rgb(0,150,0);
+  transition: background 0.1s;
+  position: absolute;
+  left: 60%;
+  top: 1%;
+  cursor: pointer;
+  &:hover{
+    background: rgb(0,225,0);
+  }  
+  &:active{
+    background: rgb(0,255,0);
   }  
 
 
