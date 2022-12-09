@@ -1,30 +1,52 @@
 import styled from 'styled-components';
 import {useState, useEffect} from 'react';
 
-const hexsize = 50;
+const hexsize = 20;
 const colors = ['rgba(150,0,0,0.9)','rgba(0,150,0,0.9)']
-
+const updateInterval = 1000;
 // rule should have 7 bits, include the center...put this first
 /*
 to get it to oscillate, a set of bits need to be flipped
 start with flower pattern - center hexagon is off, surrounding are on
-neighbors perspective is: self on, two (shared) neighbors on
+0111111 -> 1
 
-0111111
-1000011
-...no, specific pairs
-cn, up, ur, dr, dn, dl, ul
+then off with single neighbor on
+0000001 -> 1
+0000010 -> 1
+0000100 -> 1
+0001000 -> 1
+0010000 -> 1
+0100000 -> 1
 
-1   0   0   1   0    1   0   
-1   0   0   0   1    0   1   
-1   1   0   0   0    1   0   
-1   0   1   0   0    0   1   
-1   1   0   1   0    0   0   
-1   0   1   0   1    0   0   
+didn't do that but found a cool one...or maybe they will all be decent now they all cells are looped through
+but why is that not right?
 
+because it will keep propagating outward...which is what it does
+when flower is formed, on cells have 2 neighbors, these need to go to zero, which happens, but single neighbors should not be on
+a simple oscillation like that might not be possible with this rule set
 
-might also need to go through all cells, not just active cells
-otherwise a dead cell cannot become alive, derrr
+how much more complex would the rules have to be?
+there would have to be inter-rule dependence
+multiple options for output rule depending on some parameters
+parameters could be other rules or some other variable?
+
+a general interface for connecting rules together could be complicated...maybe not
+single neighor rules are powers of 2
+
+64 32 16 08 04 02 01
+cn up ur dr dn dl ul
+1  0  0  1  0  1  0 = 74 -> 1 
+1  0  0  0  1  0  1 = 69 -> 1
+1  1  0  0  0  1  0 = 98 -> 1
+1  0  1  0  0  0  1 = 81 -> 1
+1  0  0  1  0  1  0 = 74 -> 1
+1  0  1  0  1  0  0 = 84 -> 1
+
+rule(2) -> (rule(74) && rule(69) && rule(98) && rule(81) && rule(74) && rule(84)) ? 1 : 0
+
+would this work though? rules need to be updated...rules becomes part of the dynamics
+the conditions should be for the next set of rules, rules(i+1) <- rules(i)
+
 */
 const rules = 
 {
@@ -74,12 +96,12 @@ const rules =
 "0101011" : "0",
 "0101100" : "0",
 "0101101" : "0",
-"0101110" : "1",
+"0101110" : "0",
 "0101111" : "0",
-"0110000" : "1",
+"0110000" : "0",
 "0110001" : "0",
 "0110010" : "0",
-"0110011" : "1",
+"0110011" : "0",
 "0110100" : "0",
 "0110101" : "0",
 "0110110" : "0",
@@ -91,70 +113,70 @@ const rules =
 "0111100" : "0",
 "0111101" : "0",
 "0111110" : "0",
-"0111111" : "0",
+"0111111" : "1",
 "1000000" : "0",
 "1000001" : "0",
 "1000010" : "0",
 "1000011" : "0",
-"1000100" : "1",
+"1000100" : "0",
 "1000101" : "0",
 "1000110" : "0",
-"1000111" : "1",
-"1001000" : "1",
+"1000111" : "0",
+"1001000" : "0",
 "1001001" : "0",
 "1001010" : "0",
-"1001011" : "1",
-"1001100" : "1",
-"1001101" : "1",
-"1001110" : "1",
-"1001111" : "1",
-"1010000" : "1",
+"1001011" : "0",
+"1001100" : "0",
+"1001101" : "0",
+"1001110" : "0",
+"1001111" : "0",
+"1010000" : "0",
 "1010001" : "0",
-"1010010" : "1",
-"1010011" : "1",
+"1010010" : "0",
+"1010011" : "0",
 "1010100" : "0",
-"1010101" : "1",
-"1010110" : "1",
-"1010111" : "1",
-"1011000" : "1",
-"1011001" : "1",
-"1011010" : "1",
-"1011011" : "1",
-"1011100" : "1",
-"1011101" : "1",
-"1011110" : "1",
-"1011111" : "1",
-"1100000" : "1",
-"1100001" : "1",
+"1010101" : "0",
+"1010110" : "0",
+"1010111" : "0",
+"1011000" : "0",
+"1011001" : "0",
+"1011010" : "0",
+"1011011" : "0",
+"1011100" : "0",
+"1011101" : "0",
+"1011110" : "0",
+"1011111" : "0",
+"1100000" : "0",
+"1100001" : "0",
 "1100010" : "0",
-"1100011" : "1",
-"1100100" : "1",
-"1100101" : "1",
-"1100110" : "1",
-"1100111" : "1",
+"1100011" : "0",
+"1100100" : "0",
+"1100101" : "0",
+"1100110" : "0",
+"1100111" : "0",
 "1101000" : "0",
-"1101001" : "1",
-"1101010" : "1",
-"1101011" : "1",
-"1101100" : "1",
-"1101101" : "1",
-"1101110" : "1",
-"1101111" : "1",
-"1110000" : "1",
-"1110001" : "1",
-"1110010" : "1",
-"1110011" : "1",
-"1110100" : "1",
-"1110101" : "1",
-"1110110" : "1",
-"1110111" : "1",
-"1111000" : "1",
-"1111001" : "1",
-"1111010" : "1",
-"1111011" : "1",
-"1111100" : "1",
-"1111101" : "1",
-"1111110" : "1",
+"1101001" : "0",
+"1101010" : "0",
+"1101011" : "0",
+"1101100" : "0",
+"1101101" : "0",
+"1101110" : "0",
+"1101111" : "0",
+"1110000" : "0",
+"1110001" : "0",
+"1110010" : "0",
+"1110011" : "0",
+"1110100" : "0",
+"1110101" : "0",
+"1110110" : "0",
+"1110111" : "0",
+"1111000" : "0",
+"1111001" : "0",
+"1111010" : "0",
+"1111011" : "0",
+"1111100" : "0",
+"1111101" : "0",
+"1111110" : "0",
 "1111111" : "0",
 }
 
@@ -163,18 +185,19 @@ const rules =
 interface IHexagons {
   isMouseDown? : boolean,
   numrows: number;
+  numcols: number;
 }
 
   
-export const Hexagons = ({isMouseDown, numrows}:IHexagons) => {
+export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
   
   // const numrows = 20;
-  const numcols = 20;
-  const numhex = numcols * numrows;
+  // const numcols = 20;
+  const [numhex, setNumHex]  = useState(numcols * numrows);
 
   const [backgroundColor, setBackgroundColor] = useState<string[]>(Array(numhex).fill('black'));
   const [isActive, setActive] = useState<boolean[]>(Array(numhex).fill(false));
-  const allCells = [...Array(numhex)].map((_,i) => i);
+  const [allCells, setAllCells] = useState([...Array(numhex)].map((_,i) => i));
 
 
   // maybe rename activeCells - these are the cells to iterate over, a list that is supposed to grow and shrink...currently not shrinking
@@ -220,6 +243,12 @@ export const Hexagons = ({isMouseDown, numrows}:IHexagons) => {
     setActive({...q});
     setActiveCells([]);
   }
+
+  useEffect(() => {
+    setNumHex(numcols*numrows);
+    setAllCells([...Array(numcols*numrows)].map((_,i) => i));
+    console.log(numrows,numcols,numhex);
+  },[numcols,numrows, numhex, setNumHex, setAllCells, ])
   
 
   /*
@@ -260,14 +289,14 @@ export const Hexagons = ({isMouseDown, numrows}:IHexagons) => {
           // u-l : -21
           // d-l : -19
           // d-r : +1
-          shifts.push(-1, 1, 2, -19, -21);
+          shifts.push(-1, 1, 2, -numrows+1, -numrows-1);
         }
         else { // odd
           // u-r : +19
           // u-l : -1
           // d-l : +1
           // d-r : +21
-          shifts.push(19, 21, 2, 1, -1);
+          shifts.push(numrows-1, numrows+1, 2, 1, -1);
         }
         // check if shifts are positive and smaller than max
 
@@ -318,10 +347,10 @@ export const Hexagons = ({isMouseDown, numrows}:IHexagons) => {
       // console.log(activeCells);
         
         
-    },100);
+    },updateInterval);
     return () => clearInterval(interval);
     }
-  },[activeCells,  shouldIterate, ])
+  },[shouldIterate, setAllCells])
   
 
   return(
@@ -331,7 +360,7 @@ export const Hexagons = ({isMouseDown, numrows}:IHexagons) => {
           <Hexagon key={i*numcols+j} 
             isactive={isActive[i*numcols+j]}
             background={backgroundColor[i*numcols+j]}
-            style={{left:100+i*72 + 36 * (j%2), top:200 + 25*(j+1)}}
+            style={{left:100+i*Math.ceil(hexsize/Math.sqrt(2))*2  + Math.ceil(hexsize/Math.sqrt(2)) * (j%2), top:100 + hexsize/2*(j+1)}}
             onMouseDown={(e) => {
                   if(e.shiftKey){
                       updateColor(i*numcols+j, 'black');
@@ -353,7 +382,7 @@ export const Hexagons = ({isMouseDown, numrows}:IHexagons) => {
             }}
 
           >
-            {i*numcols+j}<br/>{j % 2 === 0 ? 'e' : 'o'}
+            {/*i*numcols+j}<br/>{j % 2 === 0 ? 'e' : 'o'*/}
           </Hexagon>
   
       ))}
