@@ -5,17 +5,38 @@ const hexsize = 50;
 const colors = ['rgba(150,0,0,0.9)','rgba(0,150,0,0.9)']
 
 // rule should have 7 bits, include the center...put this first
+/*
+to get it to oscillate, a set of bits need to be flipped
+start with flower pattern - center hexagon is off, surrounding are on
+neighbors perspective is: self on, two (shared) neighbors on
+
+0111111
+1000011
+...no, specific pairs
+cn, up, ur, dr, dn, dl, ul
+
+1   0   0   1   0    1   0   
+1   0   0   0   1    0   1   
+1   1   0   0   0    1   0   
+1   0   1   0   0    0   1   
+1   1   0   1   0    0   0   
+1   0   1   0   1    0   0   
+
+
+might also need to go through all cells, not just active cells
+otherwise a dead cell cannot become alive, derrr
+*/
 const rules = 
 {
-  "0000000" : "1",
+"0000000" : "0",
 "0000001" : "1",
-"0000010" : "0",
+"0000010" : "1",
 "0000011" : "0",
-"0000100" : "0",
+"0000100" : "1",
 "0000101" : "0",
-"0000110" : "1",
+"0000110" : "0",
 "0000111" : "0",
-"0001000" : "0",
+"0001000" : "1",
 "0001001" : "0",
 "0001010" : "0",
 "0001011" : "0",
@@ -23,13 +44,13 @@ const rules =
 "0001101" : "0",
 "0001110" : "0",
 "0001111" : "0",
-"0010000" : "0",
+"0010000" : "1",
 "0010001" : "0",
 "0010010" : "0",
 "0010011" : "0",
 "0010100" : "0",
 "0010101" : "0",
-"0010110" : "1",
+"0010110" : "0",
 "0010111" : "0",
 "0011000" : "0",
 "0011001" : "0",
@@ -39,7 +60,7 @@ const rules =
 "0011101" : "0",
 "0011110" : "0",
 "0011111" : "0",
-"0100000" : "0",
+"0100000" : "1",
 "0100001" : "0",
 "0100010" : "0",
 "0100011" : "0",
@@ -71,48 +92,48 @@ const rules =
 "0111101" : "0",
 "0111110" : "0",
 "0111111" : "0",
-"1000000" : "1",
-"1000001" : "1",
+"1000000" : "0",
+"1000001" : "0",
 "1000010" : "0",
 "1000011" : "0",
-"1000100" : "0",
+"1000100" : "1",
 "1000101" : "0",
 "1000110" : "0",
-"1000111" : "0",
-"1001000" : "0",
-"1001001" : "1",
+"1000111" : "1",
+"1001000" : "1",
+"1001001" : "0",
 "1001010" : "0",
-"1001011" : "0",
-"1001100" : "0",
-"1001101" : "0",
-"1001110" : "0",
-"1001111" : "0",
-"1010000" : "0",
+"1001011" : "1",
+"1001100" : "1",
+"1001101" : "1",
+"1001110" : "1",
+"1001111" : "1",
+"1010000" : "1",
 "1010001" : "0",
-"1010010" : "0",
-"1010011" : "0",
+"1010010" : "1",
+"1010011" : "1",
 "1010100" : "0",
-"1010101" : "0",
-"1010110" : "0",
+"1010101" : "1",
+"1010110" : "1",
 "1010111" : "1",
-"1011000" : "0",
-"1011001" : "0",
-"1011010" : "0",
-"1011011" : "0",
-"1011100" : "0",
-"1011101" : "0",
-"1011110" : "0",
-"1011111" : "0",
-"1100000" : "0",
-"1100001" : "0",
+"1011000" : "1",
+"1011001" : "1",
+"1011010" : "1",
+"1011011" : "1",
+"1011100" : "1",
+"1011101" : "1",
+"1011110" : "1",
+"1011111" : "1",
+"1100000" : "1",
+"1100001" : "1",
 "1100010" : "0",
 "1100011" : "1",
-"1100100" : "0",
-"1100101" : "0",
-"1100110" : "0",
-"1100111" : "0",
+"1100100" : "1",
+"1100101" : "1",
+"1100110" : "1",
+"1100111" : "1",
 "1101000" : "0",
-"1101001" : "0",
+"1101001" : "1",
 "1101010" : "1",
 "1101011" : "1",
 "1101100" : "1",
@@ -134,7 +155,7 @@ const rules =
 "1111100" : "1",
 "1111101" : "1",
 "1111110" : "1",
-"1111111" : "1",
+"1111111" : "0",
 }
 
 
@@ -153,6 +174,9 @@ export const Hexagons = ({isMouseDown, numrows}:IHexagons) => {
 
   const [backgroundColor, setBackgroundColor] = useState<string[]>(Array(numhex).fill('black'));
   const [isActive, setActive] = useState<boolean[]>(Array(numhex).fill(false));
+  const allCells = [...Array(numhex)].map((_,i) => i);
+
+
   // maybe rename activeCells - these are the cells to iterate over, a list that is supposed to grow and shrink...currently not shrinking
   const [activeCells, setActiveCells] = useState<number[]>([]);
   const [shouldIterate, setShouldIterate] = useState(false);
@@ -227,7 +251,7 @@ export const Hexagons = ({isMouseDown, numrows}:IHexagons) => {
 
       let nextActiveCells: Array<number> = [];
       let nextDeadCells: Array<number> = [];
-      activeCells.map((i) => {
+      allCells.map((i) => {
         const shifts = [-2] // format: up, ur, dr, dn, dl, dr, needs to communicate properly with format of rule
         // is this fixed with recognizing it as a symmetry? many formats are possible
         // can format be learned with a different program? some use of logic and statistics (if data can be got)
@@ -294,7 +318,7 @@ export const Hexagons = ({isMouseDown, numrows}:IHexagons) => {
       // console.log(activeCells);
         
         
-    },1000);
+    },100);
     return () => clearInterval(interval);
     }
   },[activeCells,  shouldIterate, ])
