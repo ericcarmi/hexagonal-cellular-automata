@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import {useState, useEffect} from 'react';
 
-const hexsize = 20;
+const hexsize = 10;
 const colors = ['rgba(150,0,0,0.9)','rgba(0,150,0,0.9)']
 const updateInterval = 10;
 // rule should have 7 bits, include the center...put this first
@@ -211,29 +211,24 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
     const q = isActive;
     q[id] = r[id] === 'white' ? true : false;
     setActive([...q]);
-
-
-    const cells: Array<number> = [];
-    q.map((val,i) => {
-       if(val){
-        cells.push(i);
-      }
-      }
-    );
-  setActiveCells(cells);
-    // console.log(id,activeCells );
-
-    // if(q[id] && !activeCells.includes(id)) { // if q is true, add this cell to the list
-    //   console.log('add');
-    //   setActiveCells([...activeCells, id]);
-    // }
-    // else if(!q[id] && activeCells.includes(id)) {
-    //   console.log('remove');
-    //   setActiveCells(activeCells.filter(i => i !== id));
-    // }
-
-    // console.log(newcolor, id, activeCells);
-    
+   
+  }
+  const updateAll = (active: Array<number>, dead: Array<number>) => {
+    const q = isActive;
+    const r = backgroundColor;
+    active.map(i => {
+      if(i > 0)
+        q[i] = true;
+        r[i] = 'white';
+    })
+    // dead.map(i => {
+    //   if(i > 0)
+    //     q[i] = false;
+    //     r[i] = 'black';
+    // })
+    setBackgroundColor([...r]); 
+    setActive([...q]);
+   
   }
   
   const resetAll = () => {
@@ -244,10 +239,11 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
     setActiveCells([]);
   }
 
+
   useEffect(() => {
     setNumHex(numcols*numrows);
     setAllCells([...Array(numcols*numrows)].map((_,i) => i));
-    console.log(numrows,numcols,numhex);
+    // console.log(numrows,numcols,numhex);
   },[numcols,numrows, numhex, setNumHex, setAllCells, ])
   
 
@@ -300,6 +296,7 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
 
         shifts.map((s,index) => {
           const a = s + i;
+          if(a>0) {
           if(isActive[a]){
             // stayAlive += 2**(index);
             neighbors += '1';
@@ -307,6 +304,7 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
           else{
             neighbors += '0';
           }
+        }
         })
           const stayAlive = rules[neighbors as keyof typeof rules] === '1' ? true : false
           // console.log(neighbors, stayAlive, i);
@@ -325,21 +323,25 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
         // console.log(nextDeadCells)
         // console.log(nextActiveCells)
 
-      nextActiveCells.map((i) => {
-          if(i > 0){
-          updateColor(i,'white');
-            }
-      })
-      nextDeadCells.map((i) => {
-          if(i > 0){
-          updateColor(i,'black');
-            }
-      })
+      updateAll(nextActiveCells,nextDeadCells);
+
+
+      // nextActiveCells.map((i) => {
+      //     if(i > 0){
+      //     updateColor(i,'white');
+      //       }
+      // })
+      // nextDeadCells.map((i) => {
+      //     if(i > 0){
+      //     updateColor(i,'black');
+      //       }
+      // })
 
         // nextActiveCells=[];
         // nextDeadCells=[];
 
       // console.log(activeCells);
+    // console.log('completed update function')
   }        
 
   // or you don't need to pass row,col? just figure it out by the number in activeCell? just even or odd
@@ -351,7 +353,7 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
     },updateInterval);
     return () => clearInterval(interval);
     }
-  },[shouldIterate, setAllCells])
+  },[shouldIterate, resetAll])
   
 
   return(
@@ -383,7 +385,7 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
             }}
 
           >
-            {/*i*numcols+j}<br/>{j % 2 === 0 ? 'e' : 'o'*/}
+            {/*i*numcols+j*/}
           </Hexagon>
   
       ))}
@@ -401,14 +403,14 @@ const Hexagon = styled.div.attrs((props : {top : number, left : number, backgrou
   width: ${hexsize}px;
   background: ${props => props.background};
   height: ${hexsize}px;
-  font-size:16px;
+  font-size:8px;
   border: none;
   outline: none;
   color: ${props => props.isactive ? 'black' : 'white'};
   top: calc(${props => props.top} * 1px);
   left: calc(${props => props.left} * 1px);
   clip-path: polygon(0% 50%, 25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%);
-  transform: rotateZ(0deg);
+  // transform: rotateZ(0deg);
   user-select: none;
   justify-content: center;
   align-content: center;
