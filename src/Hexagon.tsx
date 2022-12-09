@@ -3,7 +3,7 @@ import {useState, useEffect} from 'react';
 
 const hexsize = 20;
 const colors = ['rgba(150,0,0,0.9)','rgba(0,150,0,0.9)']
-const updateInterval = 1000;
+const updateInterval = 10;
 // rule should have 7 bits, include the center...put this first
 /*
 to get it to oscillate, a set of bits need to be flipped
@@ -238,9 +238,9 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
   
   const resetAll = () => {
     const r = Array(numhex).fill('black');
-    setBackgroundColor({...r});
+    setBackgroundColor([...r]);
     const q = Array(numhex).fill(false);
-    setActive({...q});
+    setActive([...q]);
     setActiveCells([]);
   }
 
@@ -272,12 +272,7 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
   
   */
 
-
-  // or you don't need to pass row,col? just figure it out by the number in activeCell? just even or odd
-  useEffect(() => {
-    if(shouldIterate){
-    const interval = setInterval(() => {
-
+  const update = () => {
       let nextActiveCells: Array<number> = [];
       let nextDeadCells: Array<number> = [];
       allCells.map((i) => {
@@ -345,7 +340,13 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
         // nextDeadCells=[];
 
       // console.log(activeCells);
-        
+  }        
+
+  // or you don't need to pass row,col? just figure it out by the number in activeCell? just even or odd
+  useEffect(() => {
+    if(shouldIterate){
+    const interval = setInterval(() => {
+      update();
         
     },updateInterval);
     return () => clearInterval(interval);
@@ -359,8 +360,8 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
           [...Array(numcols)].map((y, j) => 
           <Hexagon key={i*numcols+j} 
             isactive={isActive[i*numcols+j]}
-            background={backgroundColor[i*numcols+j]}
-            style={{left:100+i*Math.ceil(hexsize/Math.sqrt(2))*2  + Math.ceil(hexsize/Math.sqrt(2)) * (j%2), top:100 + hexsize/2*(j+1)}}
+            // background={backgroundColor[i*numcols+j]}
+            style={{background:backgroundColor[i*numcols+j], left:100+i*Math.ceil(hexsize/Math.sqrt(2))*2  + Math.ceil(hexsize/Math.sqrt(2)) * (j%2), top:100 + hexsize/2*(j+1)}}
             onMouseDown={(e) => {
                   if(e.shiftKey){
                       updateColor(i*numcols+j, 'black');
@@ -388,6 +389,7 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
       ))}
       <ResetButton onClick={resetAll}/>
       <StartButton isIterating={shouldIterate} onClick={() => setShouldIterate(!shouldIterate)}/>
+      <NextButton onClick={() => update()} isIterating={shouldIterate} />
       </Grid>
   );
 }
@@ -469,7 +471,28 @@ const StartButton = styled.div<{isIterating: boolean}>`
   }  
 
   &:active{
-    ${p => p.isIterating ? 'rgb(0,220,0)' : 'rgb(220,110,0)'};
+    background: ${p => p.isIterating ? 'rgb(0,220,0)' : 'rgb(220,110,0)'};
+  }  
+
+
+`
+const NextButton = styled.div<{isIterating: boolean}>`
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  background: ${p => p.isIterating ? 'rgb(0,0,150)' : 'rgb(0,0,150)'};
+  transition: background 0.1s;
+  position: absolute;
+  left: 65%;
+  top: 1%;
+  cursor: pointer;
+
+  &:hover{
+    background: ${p => p.isIterating ? 'rgb(0,0,180)' : 'rgb(0,0,180)'};
+  }  
+
+  &:active{
+    background: ${p => p.isIterating ? 'rgb(0,0,220)' : 'rgb(0,0,220)'};
   }  
 
 
