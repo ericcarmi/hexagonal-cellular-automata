@@ -7,9 +7,9 @@ import {Hexagons} from './Hexagon';
 
 function App() {
   const [isMouseDown, setMouseDown] = useState(false);
-  const [numRows, setNumRows] = useState(50);
-  const [numCols, setNumCols] = useState(30);
-  const hexsize = 30;
+  const [numRows, setNumRows] = useState(100);
+  const [numCols, setNumCols] = useState(60);
+  const hexsize = 15;
   const updateInterval = 10;
 
   return (

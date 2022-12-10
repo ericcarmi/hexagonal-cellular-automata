@@ -47,134 +47,22 @@ the conditions should be for the next set of rules, rules(i+1) <- rules(i)
 */
 const rules = 
 {
-"0000000" : "0",
-"0000001" : "0", // why is this down right...it is starting at bottom and going clockwise? prob after changing rows/cols
-"0000010" : "0",
-"0000011" : "0",
-"0000100" : "1",
-"0000101" : "0",
-"0000110" : "0",
-"0000111" : "0",
-"0001000" : "1",
-"0001001" : "0",
-"0001010" : "0",
-"0001011" : "0",
-"0001100" : "0",
-"0001101" : "0",
-"0001110" : "0",
-"0001111" : "0",
-"0010000" : "1",
-"0010001" : "0",
-"0010010" : "0",
-"0010011" : "0",
-"0010100" : "0",
-"0010101" : "0",
-"0010110" : "0",
-"0010111" : "0",
-"0011000" : "0",
-"0011001" : "0",
-"0011010" : "0",
-"0011011" : "0",
-"0011100" : "0",
-"0011101" : "0",
-"0011110" : "0",
-"0011111" : "0",
-"0100000" : "1",
-"0100001" : "0",
-"0100010" : "0",
-"0100011" : "0",
-"0100100" : "0",
-"0100101" : "0",
-"0100110" : "0",
-"0100111" : "0",
-"0101000" : "0",
-"0101001" : "0",
-"0101010" : "0",
-"0101011" : "0",
-"0101100" : "0",
-"0101101" : "0",
-"0101110" : "0",
-"0101111" : "0",
-"0110000" : "0",
-"0110001" : "0",
-"0110010" : "0",
-"0110011" : "0",
-"0110100" : "0",
-"0110101" : "0",
-"0110110" : "0",
-"0110111" : "0",
-"0111000" : "0",
-"0111001" : "0",
-"0111010" : "0",
-"0111011" : "0",
-"0111100" : "0",
-"0111101" : "0",
-"0111110" : "0",
-"0111111" : "1",
-"1000000" : "1",
-"1000001" : "0",
-"1000010" : "0",
-"1000011" : "0",
-"1000100" : "0",
-"1000101" : "0",
-"1000110" : "0",
-"1000111" : "0",
-"1001000" : "0",
-"1001001" : "0",
-"1001010" : "0",
-"1001011" : "0",
-"1001100" : "0",
-"1001101" : "0",
-"1001110" : "0",
-"1001111" : "0",
-"1010000" : "0",
-"1010001" : "0",
-"1010010" : "0",
-"1010011" : "0",
-"1010100" : "0",
-"1010101" : "0",
-"1010110" : "0",
-"1010111" : "0",
-"1011000" : "0",
-"1011001" : "0",
-"1011010" : "0",
-"1011011" : "0",
-"1011100" : "0",
-"1011101" : "0",
-"1011110" : "0",
-"1011111" : "0",
-"1100000" : "0",
-"1100001" : "0",
-"1100010" : "0",
-"1100011" : "0",
-"1100100" : "0",
-"1100101" : "0",
-"1100110" : "0",
-"1100111" : "0",
-"1101000" : "0",
-"1101001" : "0",
-"1101010" : "0",
-"1101011" : "0",
-"1101100" : "0",
-"1101101" : "0",
-"1101110" : "0",
-"1101111" : "0",
-"1110000" : "0",
-"1110001" : "0",
-"1110010" : "0",
-"1110011" : "0",
-"1110100" : "0",
-"1110101" : "0",
-"1110110" : "0",
-"1110111" : "0",
-"1111000" : "0",
-"1111001" : "0",
-"1111010" : "0",
-"1111011" : "0",
-"1111100" : "0",
-"1111101" : "0",
-"1111110" : "0",
-"1111111" : "0",
+"0000000" : "0","0000001" : "1","0000010"  : "1","0000011" : "0","0000100" : "1","0000101" : "0","0000110" : "0","0000111" : "0",
+"0001000" : "1","0001001" : "0","0001010"  : "0","0001011" : "0","0001100" : "0","0001101" : "0","0001110" : "0","0001111" : "0",
+"0010000" : "1","0010001" : "0","0010010"  : "0","0010011" : "0","0010100" : "0","0010101" : "0","0010110" : "0","0010111" : "0",
+"0011000" : "0","0011001" : "0","0011010"  : "0","0011011" : "0","0011100" : "0","0011101" : "0","0011110" : "0","0011111" : "0",
+"0100000" : "1","0100001" : "0","0100010"  : "0","0100011" : "1","0100100" : "0","0100101" : "0","0100110" : "0","0100111" : "0",
+"0101000" : "0","0101001" : "0","0101010"  : "0","0101011" : "0","0101100" : "0","0101101" : "0","0101110" : "0","0101111" : "0",
+"0110000" : "0","0110001" : "0","0110010"  : "0","0110011" : "0","0110100" : "0","0110101" : "0","0110110" : "0","0110111" : "0",
+"0111000" : "0","0111001" : "0","0111010"  : "0","0111011" : "0","0111100" : "0","0111101" : "0","0111110" : "0","0111111" : "1",
+"1000000" : "1","1000001" : "0","1000010"  : "0","1000011" : "0","1000100" : "0","1000101" : "0","1000110" : "0","1000111" : "0",
+"1001000" : "0","1001001" : "0","1001010"  : "0","1001011" : "0","1001100" : "0","1001101" : "0","1001110" : "0","1001111" : "0",
+"1010000" : "0","1010001" : "0","1010010"  : "0","1010011" : "0","1010100" : "0","1010101" : "0","1010110" : "0","1010111" : "0",
+"1011000" : "0","1011001" : "0","1011010"  : "0","1011011" : "0","1011100" : "0","1011101" : "0","1011110" : "0","1011111" : "0",
+"1100000" : "0","1100001" : "0","1100010"  : "0","1100011" : "0","1100100" : "0","1100101" : "0","1100110" : "0","1100111" : "0",
+"1101000" : "0","1101001" : "0","1101010"  : "0","1101011" : "0","1101100" : "0","1101101" : "0","1101110" : "0","1101111" : "0",
+"1110000" : "0","1110001" : "0","1110010"  : "0","1110011" : "0","1110100" : "0","1110101" : "0","1110110" : "0","1110111" : "0",
+"1111000" : "0","1111001" : "0","1111010"  : "0","1111011" : "0","1111100" : "0","1111101" : "0","1111110" : "0","1111111" : "0",
 }
 
 
@@ -197,6 +85,7 @@ export const Hexagons = ({isMouseDown, numrows, numcols, updateInterval, hexsize
   const [isActive, setActive] = useState<boolean[]>(Array(numhex).fill(false));
   const [allCells, setAllCells] = useState([...Array(numhex)].map((_,i) => i));
   const [boundaryCells, setBoundaryCells] = useState(Array(0));
+  const [interiorCells, setInteriorCells] = useState(Array(0));
   const [shouldIterate, setShouldIterate] = useState(false);
 
   // rename to updateCell
@@ -228,21 +117,30 @@ export const Hexagons = ({isMouseDown, numrows, numcols, updateInterval, hexsize
    
   }
 
-  const updateBoundary = () => {
+  const updateBoundary = (shift: boolean) => {
     const q = isActive;
     const r = backgroundColor;
-    if(q[0] === false){
-      boundaryCells.map(i => {
-          q[i] = true;
-          r[i] = 'white';
-      })
+
+    if(shift) {
+      if(q[0] === false){
+        boundaryCells.map(i => {
+            q[i] = true;
+            r[i] = 'white';
+        })
+      }
+      else{
+        boundaryCells.map(i => {
+            q[i] = false;
+            r[i] = 'black';
+        })
+      
+      }
     }
     else{
-      boundaryCells.map(i => {
-          q[i] = false;
-          r[i] = 'black';
-      })
-      
+        interiorCells.map(i => {
+            q[i] = true;
+            r[i] = 'white';
+        })
     }
     setBackgroundColor([...r]); 
     setActive([...q]);
@@ -260,6 +158,10 @@ export const Hexagons = ({isMouseDown, numrows, numcols, updateInterval, hexsize
   useEffect(() => {
     setNumHex(numcols*numrows);
     setAllCells([...Array(numcols*numrows)].map((_,i) => i));
+    // console.log(numrows,numcols,numhex);
+  },[numcols,numrows, numhex, setNumHex, setAllCells])
+  
+  useEffect(() => {
     let b = [];
     for(let i = 0; i < numcols; i++){
       b.push(i * numrows);
@@ -273,24 +175,21 @@ export const Hexagons = ({isMouseDown, numrows, numcols, updateInterval, hexsize
     }
 
     setBoundaryCells(b);
-    // console.log(b);
-    // console.log(numrows,numcols,numhex);
-  },[numcols,numrows, numhex, setNumHex, setAllCells, setBoundaryCells])
-  
+    console.log(boundaryCells, interiorCells);
+    
+  },[allCells])
 
-  /*
-    boundaries with r = 50 and c = 30
-  i in range(c): i*r and i*r+1 gets top boundary
-  shift +48 gives lower boundary
-  i in range(r//2): i*2 gives left boundary
-  shift +1451 to get right boundary
-  
-  */
+  useEffect(() => {
+    setInteriorCells(allCells.filter(i => !boundaryCells.includes(i)));
+    console.log(boundaryCells, interiorCells);
+    
+  },[boundaryCells])
+
 
   const update = () => {
       let nextActiveCells: Array<number> = [];
       let nextDeadCells: Array<number> = [];
-      allCells.map((i) => {
+      interiorCells.map((i) => {
         const shifts = [-2] // format: up, ur, dr, dn, dl, dr, needs to communicate properly with format of rule
         // is this fixed with recognizing it as a symmetry? many formats are possible
         // can format be learned with a different program? some use of logic and statistics (if data can be got)
@@ -329,6 +228,12 @@ export const Hexagons = ({isMouseDown, numrows, numcols, updateInterval, hexsize
           }
 
       })
+
+      // rule to always set boundary to dead? should call a function on both, or fxn pointer since there will be multiple
+    //   boundaryCells.map((i) => {
+    //   nextDeadCells.push(i);
+    // })
+    // still able to propagate away from boundary or reflect
 
       updateAll(nextActiveCells,nextDeadCells);
 
@@ -386,7 +291,7 @@ export const Hexagons = ({isMouseDown, numrows, numcols, updateInterval, hexsize
       <ResetButton onClick={resetAll}/>
       <StartButton isIterating={shouldIterate} onClick={() => setShouldIterate(!shouldIterate)}/>
       <NextButton onClick={() => update()} isIterating={shouldIterate} />
-      <BoundaryButton onClick={() => updateBoundary()} isIterating={shouldIterate} />
+      <BoundaryButton onClick={(e) => updateBoundary(e.shiftKey ? false : true)} isIterating={shouldIterate} />
       </Grid>
   );
 }
