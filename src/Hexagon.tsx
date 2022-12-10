@@ -211,6 +211,7 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
     const q = isActive;
     q[id] = r[id] === 'white' ? true : false;
     setActive([...q]);
+    // setActive(prev => [...prev.filter(i => i === q[id])]);
    
   }
   const updateAll = (active: Array<number>, dead: Array<number>) => {
@@ -221,11 +222,11 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
         q[i] = true;
         r[i] = 'white';
     })
-    // dead.map(i => {
-    //   if(i > 0)
-    //     q[i] = false;
-    //     r[i] = 'black';
-    // })
+    dead.map(i => {
+      if(i > 0)
+        q[i] = false;
+        r[i] = 'black';
+    })
     setBackgroundColor([...r]); 
     setActive([...q]);
    
@@ -236,14 +237,13 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
     setBackgroundColor([...r]);
     const q = Array(numhex).fill(false);
     setActive([...q]);
-    setActiveCells([]);
   }
 
 
   useEffect(() => {
     setNumHex(numcols*numrows);
     setAllCells([...Array(numcols*numrows)].map((_,i) => i));
-    // console.log(numrows,numcols,numhex);
+    console.log(numrows,numcols,numhex);
   },[numcols,numrows, numhex, setNumHex, setAllCells, ])
   
 
@@ -280,6 +280,7 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
           // u-l : -21
           // d-l : -19
           // d-r : +1
+          // it always uses numrows even when numrows != numcols
           shifts.push(-1, 1, 2, -numrows+1, -numrows-1);
         }
         else { // odd
@@ -290,6 +291,7 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
           shifts.push(numrows-1, numrows+1, 2, 1, -1);
         }
         // check if shifts are positive and smaller than max
+        // if(i === 712) console.log(shifts);
 
         // let stayAlive = 0;
         let neighbors = isActive[i] ? '1' : '0';
@@ -358,34 +360,34 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
 
   return(
       <Grid>
-        {[...Array(numrows)].map((x, i) =>
-          [...Array(numcols)].map((y, j) => 
-          <Hexagon key={i*numcols+j} 
-            isactive={isActive[i*numcols+j]}
+        {[...Array(numcols)].map((x, i) =>
+          [...Array(numrows)].map((y, j) => 
+          <Hexagon key={i*numrows+j} 
+            isactive={isActive[i*numrows+j]}
             // background={backgroundColor[i*numcols+j]}
-            style={{background:backgroundColor[i*numcols+j], left:100+i*Math.ceil(hexsize/Math.sqrt(2))*2  + Math.ceil(hexsize/Math.sqrt(2)) * (j%2), top:100 + hexsize/2*(j+1)}}
+            style={{background:backgroundColor[i*numrows+j], left:100+i*Math.ceil(hexsize/Math.sqrt(2))*2  + Math.ceil(hexsize/Math.sqrt(2)) * (j%2), top:100 + hexsize/2*(j+1)}}
             onMouseDown={(e) => {
                   if(e.shiftKey){
-                      updateColor(i*numcols+j, 'black');
+                      updateColor(i*numrows+j, 'black');
                     }
                     else {
-                      updateColor(i*numcols+j, 'white');
+                      updateColor(i*numrows+j, 'white');
                     }
                   } }
             onMouseEnter={(e) => { 
                   if(isMouseDown){
                     if(e.shiftKey){
-                      updateColor(i*numcols+j, 'black');
+                      updateColor(i*numrows+j, 'black');
               
                     }
                     else {
-                      updateColor(i*numcols+j, 'white');
+                      updateColor(i*numrows+j, 'white');
                     }
                   }
             }}
 
           >
-            {/*i*numcols+j*/}
+            {/*i*numrows+j*/}
           </Hexagon>
   
       ))}

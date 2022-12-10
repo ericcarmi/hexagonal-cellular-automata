@@ -7,12 +7,10 @@ import {Hexagons} from './Hexagon';
 // const colors = ['rgba(150,0,0,0.9)','rgba(0,150,0,0.9)']
 
 
-
-
 function App() {
   const [isMouseDown, setMouseDown] = useState(false);
-  const [numRows, setNumRows] = useState(100);
-  const [numCols, setNumCols] = useState(100);
+  const [numRows, setNumRows] = useState(150);
+  const [numCols, setNumCols] = useState(60);
 
   return (
     <div className="App" onMouseDown={() => setMouseDown(true)} onMouseUp={() => setMouseDown(false)}>
