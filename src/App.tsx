@@ -3,19 +3,19 @@ import './App.css';
 import {useState, useEffect} from 'react';
 import {Hexagons} from './Hexagon';
 
-// const hexsize = 100;
-// const colors = ['rgba(150,0,0,0.9)','rgba(0,150,0,0.9)']
 
 
 function App() {
   const [isMouseDown, setMouseDown] = useState(false);
-  const [numRows, setNumRows] = useState(150);
-  const [numCols, setNumCols] = useState(60);
+  const [numRows, setNumRows] = useState(50);
+  const [numCols, setNumCols] = useState(30);
+  const hexsize = 30;
+  const updateInterval = 10;
 
   return (
     <div className="App" onMouseDown={() => setMouseDown(true)} onMouseUp={() => setMouseDown(false)}>
       <header className="App-header">
-    <Hexagons isMouseDown={isMouseDown} numrows={numRows} numcols={numCols}/>
+    <Hexagons hexsize={hexsize} updateInterval={updateInterval} isMouseDown={isMouseDown} numrows={numRows} numcols={numCols}/>
       <RowsInput
           onChange={(e) => e.target.value}
           onKeyDown={(e) => {

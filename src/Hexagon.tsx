@@ -1,9 +1,6 @@
 import styled from 'styled-components';
 import {useState, useEffect} from 'react';
 
-const hexsize = 10;
-const colors = ['rgba(150,0,0,0.9)','rgba(0,150,0,0.9)']
-const updateInterval = 10;
 // rule should have 7 bits, include the center...put this first
 /*
 to get it to oscillate, a set of bits need to be flipped
@@ -51,8 +48,8 @@ the conditions should be for the next set of rules, rules(i+1) <- rules(i)
 const rules = 
 {
 "0000000" : "0",
-"0000001" : "1",
-"0000010" : "1",
+"0000001" : "0", // why is this down right...it is starting at bottom and going clockwise? prob after changing rows/cols
+"0000010" : "0",
 "0000011" : "0",
 "0000100" : "1",
 "0000101" : "0",
@@ -114,7 +111,7 @@ const rules =
 "0111101" : "0",
 "0111110" : "0",
 "0111111" : "1",
-"1000000" : "0",
+"1000000" : "1",
 "1000001" : "0",
 "1000010" : "0",
 "1000011" : "0",
@@ -186,10 +183,11 @@ interface IHexagons {
   isMouseDown? : boolean,
   numrows: number;
   numcols: number;
+  hexsize: number;
+  updateInterval: number;
 }
 
-  
-export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
+export const Hexagons = ({isMouseDown, numrows, numcols, updateInterval, hexsize}:IHexagons) => {
   
   // const numrows = 20;
   // const numcols = 20;
@@ -198,12 +196,10 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
   const [backgroundColor, setBackgroundColor] = useState<string[]>(Array(numhex).fill('black'));
   const [isActive, setActive] = useState<boolean[]>(Array(numhex).fill(false));
   const [allCells, setAllCells] = useState([...Array(numhex)].map((_,i) => i));
-
-
-  // maybe rename activeCells - these are the cells to iterate over, a list that is supposed to grow and shrink...currently not shrinking
-  const [activeCells, setActiveCells] = useState<number[]>([]);
+  const [boundaryCells, setBoundaryCells] = useState(Array(0));
   const [shouldIterate, setShouldIterate] = useState(false);
 
+  // rename to updateCell
   const updateColor = (id:number, newcolor:string) => {
     const r = backgroundColor;
     r[id] = newcolor;
@@ -211,7 +207,7 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
     const q = isActive;
     q[id] = r[id] === 'white' ? true : false;
     setActive([...q]);
-    // setActive(prev => [...prev.filter(i => i === q[id])]);
+    // setActive(prev => [...prev.filter(i => i === q[id])]); // not workin, could be faster? idk
    
   }
   const updateAll = (active: Array<number>, dead: Array<number>) => {
@@ -231,6 +227,27 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
     setActive([...q]);
    
   }
+
+  const updateBoundary = () => {
+    const q = isActive;
+    const r = backgroundColor;
+    if(q[0] === false){
+      boundaryCells.map(i => {
+          q[i] = true;
+          r[i] = 'white';
+      })
+    }
+    else{
+      boundaryCells.map(i => {
+          q[i] = false;
+          r[i] = 'black';
+      })
+      
+    }
+    setBackgroundColor([...r]); 
+    setActive([...q]);
+    
+  };
   
   const resetAll = () => {
     const r = Array(numhex).fill('black');
@@ -243,28 +260,30 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
   useEffect(() => {
     setNumHex(numcols*numrows);
     setAllCells([...Array(numcols*numrows)].map((_,i) => i));
-    console.log(numrows,numcols,numhex);
-  },[numcols,numrows, numhex, setNumHex, setAllCells, ])
+    let b = [];
+    for(let i = 0; i < numcols; i++){
+      b.push(i * numrows);
+      b.push(i * numrows + 1);
+      b.push(numrows - 2 + i * numrows);
+      b.push(numrows - 2 + i * numrows + 1);
+    }
+    for(let i = 0; i < Math.round(numrows/2); i++){
+      b.push(i * 2);
+      b.push(i * 2 + numrows * numcols - numrows + 1);
+    }
+
+    setBoundaryCells(b);
+    // console.log(b);
+    // console.log(numrows,numcols,numhex);
+  },[numcols,numrows, numhex, setNumHex, setAllCells, setBoundaryCells])
   
 
   /*
-  instead of using hexagon divs as inputs, use the keys?
-  check if not negative
-  with it not rotated anymore, down is +2, up is -2
-  up-left is ... columns looks repeated/upsampled, 0, 0, 1, 1, ...
-  maybe just give each a unique id
-
-  up-left is -21 with 20 rows, except for second row which is -20
-  dn-left is +20 or +19
-  dn-right is +21 or +20
-  up-right is -20 or -19
-  
-  traversing a column will return a constant for the last digit: 19, 59, 99, 139...just a constant offset
-  ---
-  it isn't first row/col...it alternates between +20 and +21 when going dn-right
-  switched back to numbering the same way colors are done, i*numcols + j
-  dn-right is +1 if even, +21 if odd
-  dn-left is +1 if odd, -19 if even
+    boundaries with r = 50 and c = 30
+  i in range(c): i*r and i*r+1 gets top boundary
+  shift +48 gives lower boundary
+  i in range(r//2): i*2 gives left boundary
+  shift +1451 to get right boundary
   
   */
 
@@ -276,18 +295,10 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
         // is this fixed with recognizing it as a symmetry? many formats are possible
         // can format be learned with a different program? some use of logic and statistics (if data can be got)
         if( i % 2 === 0 ) { // even
-          // u-r : -1
-          // u-l : -21
-          // d-l : -19
-          // d-r : +1
           // it always uses numrows even when numrows != numcols
           shifts.push(-1, 1, 2, -numrows+1, -numrows-1);
         }
         else { // odd
-          // u-r : +19
-          // u-l : -1
-          // d-l : +1
-          // d-r : +21
           shifts.push(numrows-1, numrows+1, 2, 1, -1);
         }
         // check if shifts are positive and smaller than max
@@ -317,30 +328,10 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
             nextDeadCells.push(i);
           }
 
-          
-
-
       })
-
-        // console.log(nextDeadCells)
-        // console.log(nextActiveCells)
 
       updateAll(nextActiveCells,nextDeadCells);
 
-
-      // nextActiveCells.map((i) => {
-      //     if(i > 0){
-      //     updateColor(i,'white');
-      //       }
-      // })
-      // nextDeadCells.map((i) => {
-      //     if(i > 0){
-      //     updateColor(i,'black');
-      //       }
-      // })
-
-        // nextActiveCells=[];
-        // nextDeadCells=[];
 
       // console.log(activeCells);
     // console.log('completed update function')
@@ -363,6 +354,7 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
         {[...Array(numcols)].map((x, i) =>
           [...Array(numrows)].map((y, j) => 
           <Hexagon key={i*numrows+j} 
+            hexsize={hexsize}
             isactive={isActive[i*numrows+j]}
             // background={backgroundColor[i*numcols+j]}
             style={{background:backgroundColor[i*numrows+j], left:100+i*Math.ceil(hexsize/Math.sqrt(2))*2  + Math.ceil(hexsize/Math.sqrt(2)) * (j%2), top:100 + hexsize/2*(j+1)}}
@@ -394,17 +386,18 @@ export const Hexagons = ({isMouseDown, numrows, numcols}:IHexagons) => {
       <ResetButton onClick={resetAll}/>
       <StartButton isIterating={shouldIterate} onClick={() => setShouldIterate(!shouldIterate)}/>
       <NextButton onClick={() => update()} isIterating={shouldIterate} />
+      <BoundaryButton onClick={() => updateBoundary()} isIterating={shouldIterate} />
       </Grid>
   );
 }
 
 
 
-const Hexagon = styled.div.attrs((props : {top : number, left : number, background : string, mousedown : boolean, isactive : boolean}) => props)`
+const Hexagon = styled.div.attrs((props : {hexsize: number, top : number, left : number, background : string, mousedown : boolean, isactive : boolean}) => props)`
   position: absolute;
-  width: ${hexsize}px;
+  width: ${props => props.hexsize}px;
   background: ${props => props.background};
-  height: ${hexsize}px;
+  height: ${props => props.hexsize}px;
   font-size:8px;
   border: none;
   outline: none;
@@ -414,6 +407,7 @@ const Hexagon = styled.div.attrs((props : {top : number, left : number, backgrou
   clip-path: polygon(0% 50%, 25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%);
   // transform: rotateZ(0deg);
   user-select: none;
+transition: background 0.5s;
   justify-content: center;
   align-content: center;
   vertical-align: middle;
@@ -484,10 +478,31 @@ const NextButton = styled.div<{isIterating: boolean}>`
   width: 30px;
   height: 30px;
   border-radius: 15px;
-  background: ${p => p.isIterating ? 'rgb(0,0,150)' : 'rgb(0,0,150)'};
+  background: ${p => p.isIterating ? 'rgb(150,0,150)' : 'rgb(150,0,150)'};
   transition: background 0.1s;
   position: absolute;
   left: 65%;
+  top: 1%;
+  cursor: pointer;
+
+  &:hover{
+    background: ${p => p.isIterating ? 'rgb(190,0,190)' : 'rgb(190,0,190)'};
+  }  
+
+  &:active{
+    background: ${p => p.isIterating ? 'rgb(220,0,220)' : 'rgb(220,0,220)'};
+  }  
+
+
+`
+const BoundaryButton = styled.div<{isIterating: boolean}>`
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  background: ${p => p.isIterating ? 'rgb(0,0,150)' : 'rgb(0,0,150)'};
+  transition: background 0.1s;
+  position: absolute;
+  left: 75%;
   top: 1%;
   cursor: pointer;
 
