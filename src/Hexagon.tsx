@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import {useState, useEffect} from 'react';
+import * as dragons from "./polygons";
 
 // rule should have 7 bits, include the center...put this first
 /*
@@ -45,24 +46,29 @@ would this work though? rules need to be updated...rules becomes part of the dyn
 the conditions should be for the next set of rules, rules(i+1) <- rules(i)
 
 */
+// why are new shifts weird...annoying, jumps around, probably cuz of the grid layout? idk
+        // 0,0,0,0,0,0 ->  
+/*
+ 0010000 -> dl when 653
+*/
 const rules = 
 {
-"0000000" : "0","0000001" : "1","0000010"  : "1","0000011" : "0","0000100" : "1","0000101" : "0","0000110" : "0","0000111" : "0",
-"0001000" : "1","0001001" : "0","0001010"  : "0","0001011" : "0","0001100" : "0","0001101" : "0","0001110" : "0","0001111" : "0",
-"0010000" : "1","0010001" : "0","0010010"  : "0","0010011" : "0","0010100" : "0","0010101" : "0","0010110" : "0","0010111" : "0",
-"0011000" : "0","0011001" : "0","0011010"  : "0","0011011" : "0","0011100" : "0","0011101" : "0","0011110" : "0","0011111" : "0",
-"0100000" : "1","0100001" : "0","0100010"  : "0","0100011" : "1","0100100" : "0","0100101" : "0","0100110" : "0","0100111" : "0",
-"0101000" : "0","0101001" : "0","0101010"  : "0","0101011" : "0","0101100" : "0","0101101" : "0","0101110" : "0","0101111" : "0",
-"0110000" : "0","0110001" : "0","0110010"  : "0","0110011" : "0","0110100" : "0","0110101" : "0","0110110" : "0","0110111" : "0",
-"0111000" : "0","0111001" : "0","0111010"  : "0","0111011" : "0","0111100" : "0","0111101" : "0","0111110" : "0","0111111" : "1",
-"1000000" : "1","1000001" : "0","1000010"  : "0","1000011" : "0","1000100" : "0","1000101" : "0","1000110" : "0","1000111" : "0",
-"1001000" : "0","1001001" : "0","1001010"  : "0","1001011" : "0","1001100" : "0","1001101" : "0","1001110" : "0","1001111" : "0",
-"1010000" : "0","1010001" : "0","1010010"  : "0","1010011" : "0","1010100" : "0","1010101" : "0","1010110" : "0","1010111" : "0",
-"1011000" : "0","1011001" : "0","1011010"  : "0","1011011" : "0","1011100" : "0","1011101" : "0","1011110" : "0","1011111" : "0",
-"1100000" : "0","1100001" : "0","1100010"  : "0","1100011" : "0","1100100" : "0","1100101" : "0","1100110" : "0","1100111" : "0",
-"1101000" : "0","1101001" : "0","1101010"  : "0","1101011" : "0","1101100" : "0","1101101" : "0","1101110" : "0","1101111" : "0",
-"1110000" : "0","1110001" : "0","1110010"  : "0","1110011" : "0","1110100" : "0","1110101" : "0","1110110" : "0","1110111" : "0",
-"1111000" : "0","1111001" : "0","1111010"  : "0","1111011" : "0","1111100" : "0","1111101" : "0","1111110" : "0","1111111" : "0",
+"0000000" : "0" ,"0000001" : "1" ,"0000010"  : "1" ,"0000011" : "0" ,"0000100" : "1" ,"0000101" : "0" ,"0000110" : "0" ,"0000111" : "0" ,
+"0001000" : "1" ,"0001001" : "0" ,"0001010"  : "0" ,"0001011" : "0" ,"0001100" : "0" ,"0001101" : "0" ,"0001110" : "0" ,"0001111" : "0" ,
+"0010000" : "1" ,"0010001" : "0" ,"0010010"  : "0" ,"0010011" : "0" ,"0010100" : "0" ,"0010101" : "0" ,"0010110" : "0" ,"0010111" : "0" ,
+"0011000" : "0" ,"0011001" : "0" ,"0011010"  : "0" ,"0011011" : "0" ,"0011100" : "0" ,"0011101" : "0" ,"0011110" : "0" ,"0011111" : "0" ,
+"0100000" : "1" ,"0100001" : "0" ,"0100010"  : "0" ,"0100011" : "0" ,"0100100" : "0" ,"0100101" : "0" ,"0100110" : "0" ,"0100111" : "0" ,
+"0101000" : "0" ,"0101001" : "0" ,"0101010"  : "0" ,"0101011" : "0" ,"0101100" : "0" ,"0101101" : "0" ,"0101110" : "0" ,"0101111" : "0" ,
+"0110000" : "0" ,"0110001" : "0" ,"0110010"  : "0" ,"0110011" : "0" ,"0110100" : "0" ,"0110101" : "0" ,"0110110" : "0" ,"0110111" : "0" ,
+"0111000" : "0" ,"0111001" : "0" ,"0111010"  : "0" ,"0111011" : "0" ,"0111100" : "0" ,"0111101" : "0" ,"0111110" : "0" ,"0111111" : "0" ,
+"1000000" : "1" ,"1000001" : "0" ,"1000010"  : "0" ,"1000011" : "0" ,"1000100" : "0" ,"1000101" : "0" ,"1000110" : "0" ,"1000111" : "0" ,
+"1001000" : "0" ,"1001001" : "0" ,"1001010"  : "0" ,"1001011" : "0" ,"1001100" : "0" ,"1001101" : "0" ,"1001110" : "0" ,"1001111" : "0" ,
+"1010000" : "0" ,"1010001" : "0" ,"1010010"  : "0" ,"1010011" : "0" ,"1010100" : "0" ,"1010101" : "0" ,"1010110" : "0" ,"1010111" : "0" ,
+"1011000" : "0" ,"1011001" : "0" ,"1011010"  : "0" ,"1011011" : "0" ,"1011100" : "0" ,"1011101" : "0" ,"1011110" : "0" ,"1011111" : "0" ,
+"1100000" : "0" ,"1100001" : "0" ,"1100010"  : "0" ,"1100011" : "0" ,"1100100" : "0" ,"1100101" : "0" ,"1100110" : "0" ,"1100111" : "0" ,
+"1101000" : "0" ,"1101001" : "0" ,"1101010"  : "0" ,"1101011" : "0" ,"1101100" : "0" ,"1101101" : "0" ,"1101110" : "0" ,"1101111" : "0" ,
+"1110000" : "0" ,"1110001" : "0" ,"1110010"  : "0" ,"1110011" : "0" ,"1110100" : "0" ,"1110101" : "0" ,"1110110" : "0" ,"1110111" : "0" ,
+"1111000" : "0" ,"1111001" : "0" ,"1111010"  : "0" ,"1111011" : "0" ,"1111100" : "0" ,"1111101" : "0" ,"1111110" : "0" ,"1111111" : "0" ,
 }
 
 
@@ -74,6 +80,11 @@ interface IHexagons {
   hexsize: number;
   updateInterval: number;
 }
+
+
+
+
+
 
 export const Hexagons = ({isMouseDown, numrows, numcols, updateInterval, hexsize}:IHexagons) => {
   
@@ -87,6 +98,7 @@ export const Hexagons = ({isMouseDown, numrows, numcols, updateInterval, hexsize
   const [boundaryCells, setBoundaryCells] = useState(Array(0));
   const [interiorCells, setInteriorCells] = useState(Array(0));
   const [shouldIterate, setShouldIterate] = useState(false);
+  const [shouldInit, setShouldInit] = useState(true);
 
   // rename to updateCell
   const updateColor = (id:number, newcolor:string) => {
@@ -106,12 +118,12 @@ export const Hexagons = ({isMouseDown, numrows, numcols, updateInterval, hexsize
       if(i > 0)
         q[i] = true;
         r[i] = 'white';
-    })
+    });
     dead.map(i => {
       if(i > 0)
         q[i] = false;
         r[i] = 'black';
-    })
+    });
     setBackgroundColor([...r]); 
     setActive([...q]);
    
@@ -144,6 +156,7 @@ export const Hexagons = ({isMouseDown, numrows, numcols, updateInterval, hexsize
     }
     setBackgroundColor([...r]); 
     setActive([...q]);
+
     
   };
   
@@ -155,62 +168,70 @@ export const Hexagons = ({isMouseDown, numrows, numcols, updateInterval, hexsize
   }
 
 
-  useEffect(() => {
-    setNumHex(numcols*numrows);
-    setAllCells([...Array(numcols*numrows)].map((_,i) => i));
-    // console.log(numrows,numcols,numhex);
-  },[numcols,numrows, numhex, setNumHex, setAllCells])
+  function initCells() {
+      setNumHex(numcols*numrows);
+      setAllCells([...Array(numcols*numrows)].map((_,i) => i));
+      // console.log(numrows,numcols,numhex);
   
-  useEffect(() => {
-    let b = [];
-    for(let i = 0; i < numcols; i++){
-      b.push(i * numrows);
-      b.push(i * numrows + 1);
-      b.push(numrows - 2 + i * numrows);
-      b.push(numrows - 2 + i * numrows + 1);
-    }
-    for(let i = 0; i < Math.round(numrows/2); i++){
-      b.push(i * 2);
-      b.push(i * 2 + numrows * numcols - numrows + 1);
-    }
+      let b = [];
+      for(let i = 0; i < numrows; i++){
+        b.push(i * numrows);
+        b.push(numrows - 2 + i * numrows+1);
+      }
+      for(let i = 0; i < Math.round(numcols/2); i++){
+        b.push(i * 2);
+        b.push(i * 2 + 1);
+        b.push(i * 2 + numrows * numcols - numrows + 1);
+        b.push(i * 2 + numrows * numcols - numrows);
+      }
 
-    setBoundaryCells(b);
-    console.log(boundaryCells, interiorCells);
+      setBoundaryCells(b);
+      // console.log(boundaryCells, interiorCells);
     
-  },[allCells])
+
+      setInteriorCells(allCells.filter(i => !boundaryCells.includes(i)));
+      // console.log(boundaryCells, interiorCells);
+
+  
+  };
 
   useEffect(() => {
-    setInteriorCells(allCells.filter(i => !boundaryCells.includes(i)));
-    console.log(boundaryCells, interiorCells);
     
-  },[boundaryCells])
+    if(shouldInit){
+      initCells();
+      setShouldInit(false);
+    }
+  },[setShouldInit, shouldInit])
 
 
   const update = () => {
       let nextActiveCells: Array<number> = [];
       let nextDeadCells: Array<number> = [];
       interiorCells.map((i) => {
-        const shifts = [-2] // format: up, ur, dr, dn, dl, dr, needs to communicate properly with format of rule
+        // const shifts = [-2] // format: up, ur, dr, dn, dl, dr, needs to communicate properly with format of rule
         // is this fixed with recognizing it as a symmetry? many formats are possible
         // can format be learned with a different program? some use of logic and statistics (if data can be got)
-        if( i % 2 === 0 ) { // even
+        // now doing the correct format of regular hexagon...
+      const shifts = [-1]
+      const x = Math.floor(i/2)%numrows;
+        if(x < (numrows/2)) { // even (0)
           // it always uses numrows even when numrows != numcols
-          shifts.push(-1, 1, 2, -numrows+1, -numrows-1);
+          // shifts.push(-1, 1, 2, -numrows+1, -numrows-1);
+          shifts.push(numrows-1,numrows, 1, -numrows, -numrows-1);
         }
-        else { // odd
-          shifts.push(numrows-1, numrows+1, 2, 1, -1);
+        else { // odd (1) ...it's different now with regular tiling, this is the condition for second half of the rows
+          // shifts.push(numrows-1, numrows+1, 2, 1, -1);
+          shifts.push(numrows,numrows+1, 1, -numrows+1, -numrows);
         }
-        // check if shifts are positive and smaller than max
-        // if(i === 712) console.log(shifts);
+        // console.log(shifts.map((k) => i + k));
+      // console.log(i,Math.floor(i/2)%numrows);
 
-        // let stayAlive = 0;
         let neighbors = isActive[i] ? '1' : '0';
 
         shifts.map((s,index) => {
           const a = s + i;
           if(a>0) {
           if(isActive[a]){
-            // stayAlive += 2**(index);
             neighbors += '1';
           }
           else{
@@ -219,7 +240,6 @@ export const Hexagons = ({isMouseDown, numrows, numcols, updateInterval, hexsize
         }
         })
           const stayAlive = rules[neighbors as keyof typeof rules] === '1' ? true : false
-          // console.log(neighbors, stayAlive, i);
           if(stayAlive){
             nextActiveCells.push(i);
           }
@@ -242,6 +262,14 @@ export const Hexagons = ({isMouseDown, numrows, numcols, updateInterval, hexsize
     // console.log('completed update function')
   }        
 
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     let x = numcols*numrows/2 + numrows - 2;
+  //     updateColor(x, 'white');
+  //   },updateInterval);
+  //   return () => clearInterval(interval);
+  // },[updateColor,])
+
   // or you don't need to pass row,col? just figure it out by the number in activeCell? just even or odd
   useEffect(() => {
     if(shouldIterate){
@@ -254,6 +282,7 @@ export const Hexagons = ({isMouseDown, numrows, numcols, updateInterval, hexsize
   },[shouldIterate, resetAll])
   
 
+  // when setting left position, use ceil() to create tiny border around hexagons, round/floor to have no border
   return(
       <Grid>
         {[...Array(numcols)].map((x, i) =>
@@ -262,7 +291,10 @@ export const Hexagons = ({isMouseDown, numrows, numcols, updateInterval, hexsize
             hexsize={hexsize}
             isactive={isActive[i*numrows+j]}
             // background={backgroundColor[i*numcols+j]}
-            style={{background:backgroundColor[i*numrows+j], left:100+i*Math.ceil(hexsize/Math.sqrt(2))*2  + Math.ceil(hexsize/Math.sqrt(2)) * (j%2), top:100 + hexsize/2*(j+1)}}
+            style={{background:backgroundColor[i*numrows+j], 
+                    left:100+i*hexsize*3/4  + (hexsize/2) * i%2, 
+                    top:150 + hexsize/2/Math.sqrt(3)*(i%2) + hexsize/Math.sqrt(3) * ((j))
+                  }}
             onMouseDown={(e) => {
                   if(e.shiftKey){
                       updateColor(i*numrows+j, 'black');
@@ -284,7 +316,7 @@ export const Hexagons = ({isMouseDown, numrows, numcols, updateInterval, hexsize
             }}
 
           >
-            {/*i*numrows+j*/}
+            {((i*numrows+j))}<br/>{}{Math.floor((i*numrows+j)/2) % numrows < (numrows/2) ? '0' : '1'}
           </Hexagon>
   
       ))}
@@ -302,8 +334,8 @@ const Hexagon = styled.div.attrs((props : {hexsize: number, top : number, left :
   position: absolute;
   width: ${props => props.hexsize}px;
   background: ${props => props.background};
-  height: ${props => props.hexsize}px;
-  font-size:8px;
+  height: ${props => props.hexsize/Math.sqrt(3)}px;
+  font-size:${props => props.hexsize/4}px;
   border: none;
   outline: none;
   color: ${props => props.isactive ? 'black' : 'white'};
@@ -421,3 +453,47 @@ const BoundaryButton = styled.div<{isIterating: boolean}>`
 
 
 `
+
+
+const Dragon = styled.div.attrs((props : {hexsize: number, top : number, left : number, background : string, mousedown : boolean, isactive : boolean}) => props)`
+
+
+  position: absolute;
+  width: ${props => props.hexsize}px;
+  background: ${props => props.background};
+  height: ${props => props.hexsize}px;
+  font-size:8px;
+  border: none;
+  outline: none;
+  color: ${props => props.isactive ? 'black' : 'white'};
+  top: calc(${props => props.top} * 1px);
+  left: calc(${props => props.left} * 1px);
+  clip-path: polygon(0% 50%, 25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%);
+  // transform: rotateZ(0deg);
+  user-select: none;
+  transition: background 0.5s;
+  justify-content: center;
+  align-content: center;
+  vertical-align: middle;
+
+
+  user-select: none;
+  cursor: pointer;
+  clip-path:${dragons.dragon_polygon};
+    
+  transition: transform 0.5s, filter 0.4s;
+  // transform: rotateX(60deg) rotateZ(-45deg);  
+ 
+
+  &:hover {
+    filter: hue-rotate(90deg);
+    // transform: rotate3d(360, 120, -90, 60deg) rotateZ(-45deg) translateZ(10px);
+    
+  }
+  // filter: hue-rotate will change the background color, but setting it won't...because of style={} in the wrapper? then positions don't get set
+  &:active {
+    filter: hue-rotate(-90deg);
+  }
+    
+`;
+

@@ -7,10 +7,10 @@ import {Hexagons} from './Hexagon';
 
 function App() {
   const [isMouseDown, setMouseDown] = useState(false);
-  const [numRows, setNumRows] = useState(100);
-  const [numCols, setNumCols] = useState(60);
-  const hexsize = 15;
-  const updateInterval = 10;
+  const [numRows, setNumRows] = useState(30);
+  const [numCols, setNumCols] = useState(50);
+  const hexsize = 2**5;
+  const updateInterval = 300;
 
   return (
     <div className="App" onMouseDown={() => setMouseDown(true)} onMouseUp={() => setMouseDown(false)}>
