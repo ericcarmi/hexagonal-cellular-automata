@@ -79,13 +79,13 @@ export const Hexagons = ({
       <Grid onKeyDown={(e) => console.log(e.code)}>
         {[...Array(numCols)].map((x, i) =>
           [...Array(numRows)].map((y, j) => 
-          <Hexagon key={i*numRows+j} 
+          <Dragon key={i*numRows+j} 
             hexsize={hexsize}
             isactive={isActive[i*numRows+j]}
             // background={backgroundColor[i*numcols+j]}
             style={{background:backgroundColor[i*numRows+j], 
-                    left:100+i*hexsize*0.75  + (hexsize/2) * i%2, 
-                    top:150 + hexsize/2/Math.sqrt(3)*(i%2) + hexsize/Math.sqrt(3) * ((j))
+                    left:20+i*hexsize/1.625, 
+                    top:150 +  hexsize/1.625 * j //+ hexsize/2*(i%2)
                   }}
             onMouseDown={(e) => {
                   if(e.shiftKey){
@@ -108,8 +108,8 @@ export const Hexagons = ({
             }}
 
           >
-            {/*((i*numrows+j))}<br/>{}{Math.floor((i*numrows+j)/2) % numrows < (numrows/2) ? '0' : '1'*/}
-          </Hexagon>
+            {/*i*numRows+j}<br/>{}{Math.floor((i*numRows+j)/2) % numRows < (numRows/2) ? '0' : '1'*/}
+          </Dragon>
   
       ))}
       </Grid>
@@ -181,15 +181,18 @@ const Dragon = styled.div.attrs((props : {hexsize: number, top : number, left : 
   justify-content: center;
   align-content: center;
   vertical-align: middle;
+// line-height:${props => props.hexsize}px; 
 
 
   user-select: none;
   cursor: pointer;
   clip-path:${dragons.dragon_polygon};
     
-  transition: transform 0.5s, filter 0.4s;
+  // transition: transform 0.5s, filter 0.4s;
   // transform: rotateX(60deg) rotateZ(-45deg);  
  
+  transition: background 1s, top 0.3s, left 0.3s;
+transition-delay: left 0.3s, top 0.3s;
 
   &:hover {
     filter: hue-rotate(90deg);

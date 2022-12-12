@@ -7,10 +7,10 @@ import {rules} from './rules';
 
 function App() {
   const [isMouseDown, setMouseDown] = useState(false);
-  const [numRows, setNumRows] = useState(80);
-  const [numCols, setNumCols] = useState(100);
+  const [numRows, setNumRows] = useState(40);
+  const [numCols, setNumCols] = useState(80);
   const hexsize = 2**4;
-  const updateInterval = 1000;
+  const updateInterval = 400;
 
 
   // const numrows = 20;
@@ -99,11 +99,11 @@ function App() {
       // console.log(numrows,numcols,numhex);
   
       let b = [];
-      for(let i = 0; i < numRows; i++){
+      for(let i = 0; i < numCols; i++){
         b.push(i * numRows);
         b.push(numRows - 2 + i * numRows+1);
       }
-      for(let i = 0; i < Math.round(numCols/2); i++){
+      for(let i = 0; i < Math.round(numRows/2); i++){
         b.push(i * 2);
         b.push(i * 2 + 1);
         b.push(i * 2 + numRows * numCols - numRows + 1);
@@ -141,12 +141,15 @@ function App() {
       const x = Math.floor(i/2)%numRows;
         if(x < (numRows/2)) { // even (0)
           // it always uses numrows even when numrows != numcols
-          // shifts.push(-1, 1, 2, -numrows+1, -numrows-1);
-          shifts.push(numRows-1,numRows, 1, -numRows, -numRows-1);
+          // shifts.push(-1, 1, 2, -numrows+1, -numrows-1); // same width and height
+          // shifts.push(numRows-1,numRows, 1, -numRows, -numRows-1); // regular hexagon
+          shifts.push(numRows-1,numRows, 1, -numRows+1, -numRows); // dragon  rectangular tiling
+        
         }
         else { // odd (1) ...it's different now with regular tiling, this is the condition for second half of the rows
-          // shifts.push(numRows-1, numRows+1, 2, 1, -1);
-          shifts.push(numRows,numRows+1, 1, -numRows+1, -numRows);
+          // shifts.push(numRows-1, numRows+1, 2, 1, -1); //same width and height
+          // shifts.push(numRows,numRows+1, 1, -numRows+1, -numRows); // regular hexagon
+          shifts.push(numRows-1,numRows, 1, -numRows+1, -numRows); // dragon rect tiling
         }
         // console.log(shifts.map((k) => i + k));
       // console.log(i,Math.floor(i/2)%numRows);
@@ -175,9 +178,9 @@ function App() {
       })
 
       // rule to always set boundary to dead? should call a function on both, or fxn pointer since there will be multiple
-    //   boundaryCells.map((i) => {
-    //   nextDeadCells.push(i);
-    // })
+      boundaryCells.map((i) => {
+      nextDeadCells.push(i);
+    })
     // still able to propagate away from boundary or reflect
 
       updateAll(nextActiveCells,nextDeadCells);
@@ -189,7 +192,7 @@ function App() {
 
   // useEffect(() => {
   //   const interval = setInterval(() => {
-  //     let x = numcols*numRows/2 + numRows - 2;
+  //     let x = numCols*numRows/2 - 1 - numRows;
   //     updateColor(x, 'white');
   //   },updateInterval);
   //   return () => clearInterval(interval);

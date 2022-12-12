@@ -1,4 +1,9 @@
-
+// center, up, up-right, down-right, down, down-left, up-right
+// cn, dn, dl, ul, up, ur, dr 
+// or was it right before? think so, but relativistic frame was offset, whoops
+// when you pick all off except down, it will move up
+// cn, up, ur, dr, dn, dl, ul
+// x1  x2  x3  x4  x5  x6  x7 -> y
 export const rules = 
 {
 "0000000" : "0" ,"0000001" : "1" ,"0000010"  : "1" ,"0000011" : "0" ,"0000100" : "1" ,"0000101" : "0" ,"0000110" : "0" ,"0000111" : "0" ,
@@ -8,8 +13,8 @@ export const rules =
 "0100000" : "1" ,"0100001" : "0" ,"0100010"  : "0" ,"0100011" : "0" ,"0100100" : "0" ,"0100101" : "0" ,"0100110" : "0" ,"0100111" : "0" ,
 "0101000" : "0" ,"0101001" : "0" ,"0101010"  : "0" ,"0101011" : "0" ,"0101100" : "0" ,"0101101" : "0" ,"0101110" : "0" ,"0101111" : "0" ,
 "0110000" : "0" ,"0110001" : "0" ,"0110010"  : "0" ,"0110011" : "0" ,"0110100" : "0" ,"0110101" : "0" ,"0110110" : "0" ,"0110111" : "0" ,
-"0111000" : "0" ,"0111001" : "0" ,"0111010"  : "0" ,"0111011" : "0" ,"0111100" : "0" ,"0111101" : "0" ,"0111110" : "0" ,"0111111" : "1" ,
-"1000000" : "1" ,"1000001" : "0" ,"1000010"  : "0" ,"1000011" : "0" ,"1000100" : "0" ,"1000101" : "0" ,"1000110" : "0" ,"1000111" : "0" ,
+"0111000" : "0" ,"0111001" : "0" ,"0111010"  : "0" ,"0111011" : "0" ,"0111100" : "0" ,"0111101" : "0" ,"0111110" : "0" ,"0111111" : "0" ,
+"1000000" : "0" ,"1000001" : "0" ,"1000010"  : "0" ,"1000011" : "0" ,"1000100" : "0" ,"1000101" : "0" ,"1000110" : "0" ,"1000111" : "0" ,
 "1001000" : "0" ,"1001001" : "0" ,"1001010"  : "0" ,"1001011" : "0" ,"1001100" : "0" ,"1001101" : "0" ,"1001110" : "0" ,"1001111" : "0" ,
 "1010000" : "0" ,"1010001" : "0" ,"1010010"  : "0" ,"1010011" : "0" ,"1010100" : "0" ,"1010101" : "0" ,"1010110" : "0" ,"1010111" : "0" ,
 "1011000" : "0" ,"1011001" : "0" ,"1011010"  : "0" ,"1011011" : "0" ,"1011100" : "0" ,"1011101" : "0" ,"1011110" : "0" ,"1011111" : "0" ,
@@ -20,3 +25,29 @@ export const rules =
 }
 
 
+/*
+
+ideas for rule interfaces
+
+visual one would be cool but it still is a lot to look at
+
+what if this is where a language interface should start? API for settings rules
+logical inference of what rules to set based on symbolic (english) instructions
+
+e.g. "if up is on, output is on" --> look at every up-bit (2nd bit) and set appropriately
+some logic is implied, like the converse/contrapositive? "if up is off (not on), output if off"
+no, the inverse
+if p then q
+if !p then !q
+
+other rules can be given more abstract names, like Sierpinski, just 4 bits on
+they can also be named by the number they create, a 128-bit number...
+
+---
+
+it might be nice to have something like a search
+describe the rule by which bits you want on
+
+
+
+*/
