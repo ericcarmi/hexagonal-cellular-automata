@@ -9,8 +9,8 @@ function App() {
   const [isMouseDown, setMouseDown] = useState(false);
   const [numRows, setNumRows] = useState(40);
   const [numCols, setNumCols] = useState(80);
+  const [updateInterval, setUpdateInterval] = useState(100);
   const hexsize = 2**5;
-  const updateInterval = 10;
 
 
   // const numrows = 20;
@@ -247,8 +247,17 @@ function App() {
           }}
           />
     <Cols> cols </Cols>
-      <IntervalInput/>
-    <Interval onChange = {event => console.log(event.target)}> speed </Interval>
+      <IntervalInput
+          placeholder={updateInterval.toString()}
+          onChange={(e) => e.target.value}
+          onKeyDown={(e) => {
+            if(e.code === 'Enter' && !isNaN(Number(e.currentTarget.value))){
+              if(Number(e.currentTarget.value) >= 10 && Number(e.currentTarget.value) <= 2000)
+              setUpdateInterval(Number(e.currentTarget.value));
+            }
+          }}
+          />
+    <Interval> speed </Interval>
 
       <ResetButton onClick={resetAll}/>
       <StartButton isIterating={shouldIterate} onClick={() => setShouldIterate(!shouldIterate)}/>
