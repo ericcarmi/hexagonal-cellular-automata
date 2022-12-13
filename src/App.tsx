@@ -10,7 +10,7 @@ function App() {
   const [numRows, setNumRows] = useState(40);
   const [numCols, setNumCols] = useState(80);
   const hexsize = 2**5;
-  const updateInterval = 100;
+  const updateInterval = 10;
 
 
   // const numrows = 20;

@@ -1,3 +1,4 @@
+import React, {useState} from 'react';
 import styled from 'styled-components';
 // center, up, up-right, down-right, down, down-left, up-right
 // cn, dn, dl, ul, up, ur, dr 
@@ -55,91 +56,99 @@ interface IRules{
   
 }
 
-const Hex7 = ({...props}) => {
-  const hexsize = 20;
-  return(
-    <div style={props.style}>
-      <Hexagon
-        hexsize={hexsize}
-        style={{
-          background: 'blue',
-          top: 0,
-          left: 0,
-        }}
-        />
-      <Hexagon
-        hexsize={hexsize}
-        style={{
-          background: 'blue',
-          left: -hexsize/1.25,          
-          top: hexsize/3,
-        }}
-        />
-      <Hexagon
-        hexsize={hexsize}
-        style={{
-          background: 'blue',
-          left: 0,          
-          top: hexsize*2/3,
-        }}
-        />
-      <Hexagon
-        hexsize={hexsize}
-        style={{
-          background: 'blue',
-          left: hexsize/1.25,          
-          top: hexsize/3,
-        }}
-        />
-      <Hexagon
-        hexsize={hexsize}
-        style={{
-          background: 'blue',
-          left: -hexsize/1.25,          
-          top: -hexsize/3,
-        }}
-        />
-      <Hexagon
-        hexsize={hexsize}
-        style={{
-          background: 'blue',
-          left: 0,          
-          top: -hexsize*2/3,
-        }}
-        />
-      <Hexagon
-        hexsize={hexsize}
-        style={{
-          background: 'blue',
-          left: hexsize/1.25,          
-          top: -hexsize/3,
-        }}
-        />
 
-      <Hexagon
-        hexsize={hexsize}
-        style={{
-          background: 'white',
-          left: hexsize*2,          
-          top: 0,
-          cursor: 'pointer',
-        }}
-        />
-    </div>
+// can't pass in 'key' as prop because it is a 'keyword', but it doens't give that error - annoying
+const Hex7 = ({i,j,mkey} : {i: number, j: number, mkey:number}) => {
+const hexsize = 25;
+const [isSelected, setIsSelected] = useState(Array(128).fill(false));
+
+// console.log(mkey*8);
+return(
+  <div style={{position: 'absolute', top: 100 + j*115, left: 30 + i*105 }}>
+    <Hexagon
+      hexsize={hexsize}
+      style={{
+        background: 'blue',
+        top: 0,
+        left: 0,
+      }}
+      />
+    <Hexagon
+      hexsize={hexsize}
+      style={{
+        background: 'blue',
+        left: -hexsize/1.25,          
+        top: hexsize/3,
+      }}
+      />
+    <Hexagon
+      hexsize={hexsize}
+      style={{
+        background: 'blue',
+        left: 0,          
+        top: hexsize*2/3,
+      }}
+      />
+    <Hexagon
+      hexsize={hexsize}
+      style={{
+        background: 'blue',
+        left: hexsize/1.25,          
+        top: hexsize/3,
+      }}
+      />
+    <Hexagon
+      hexsize={hexsize}
+      style={{
+        background: 'blue',
+        left: -hexsize/1.25,          
+        top: -hexsize/3,
+      }}
+      />
+    <Hexagon
+      hexsize={hexsize}
+      style={{
+        background: 'blue',
+        left: 0,          
+        top: -hexsize*2/3,
+      }}
+      />
+    <Hexagon
+      hexsize={hexsize}
+      style={{
+        background: 'blue',
+        left: hexsize/1.25,          
+        top: -hexsize/3,
+      }}
+      />
+
+    <Hexagon
+      onClick={() => setIsSelected((prev) => prev.map((item, index) => index === mkey ? !item : item))}
+      hexsize={hexsize}
+      style={{
+        background: isSelected[mkey] ? 'white' : 'black',
+        left: hexsize*2,          
+        top: 0,
+        cursor: 'pointer',
+      }}
+      />
+  </div>
   );
-}
+};
+
 
 export const Rules = ({}:IRules) => {
 
   return (
-    <div>
+    <div style={{width: '100%', height:'100%'}}>
       {[...Array(16)].map((y,i) => 
       [...Array(8)].map((x,j) => 
-        <>
-          <Hex7 key={i*16+j}
-              style={{position: 'absolute', top: 50 + j*60, left: 50 + i*90 }}
-              />
-        </>
+          <Hex7 
+            mkey={i*16+j}
+            key={i*16+j}
+            i={i}
+            j={j}
+          />
         )
       )
 
@@ -165,11 +174,11 @@ const Hexagon = styled.div.attrs((props : {hexsize: number, top : number, left :
   clip-path: polygon(0% 50%, 25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%);
   // transform: rotateZ(0deg);
   user-select: none;
-  transition: background 1s, top 0.3s, left 0.3s;
-transition-delay: left 0.3s, top 0.3s;
+  transition: background 0.2s, top 0.3s, left 0.3s;
+  transition-delay: left 0.3s, top 0.3s;
   justify-content: center;
   align-content: center;
   vertical-align: middle;
   // line-height: 50px;
-`
+`;
 
