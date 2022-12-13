@@ -2,15 +2,15 @@ import styled from 'styled-components';
 import './App.css';
 import {useState, useEffect} from 'react';
 import {Hexagons} from './Hexagon';
-import {rules} from './rules';
+import {rules, Rules} from './rules';
 
 
 function App() {
   const [isMouseDown, setMouseDown] = useState(false);
   const [numRows, setNumRows] = useState(40);
   const [numCols, setNumCols] = useState(80);
-  const hexsize = 2**4;
-  const updateInterval = 400;
+  const hexsize = 2**5;
+  const updateInterval = 100;
 
 
   // const numrows = 20;
@@ -27,30 +27,35 @@ function App() {
 
   // rename to updateCell
   const updateColor = (id:number, newcolor:string) => {
-    const r = backgroundColor;
-    r[id] = newcolor;
-    setBackgroundColor([...r]); 
-    const q = isActive;
-    q[id] = r[id] === 'white' ? true : false;
-    setActive([...q]);
-    // setActive(prev => [...prev.filter(i => i === q[id])]); // not workin, could be faster? idk
+    // const r = backgroundColor;
+    // r[id] = newcolor;
+    // setBackgroundColor([...r]); 
+    // setBackgroundColor(prev => prev.map((item, index) => index === id ? newcolor : item))
+    // const q = isActive;
+    // q[id] = r[id] === 'white' ? true : false;
+    const b = newcolor === 'white' ? true : false;
+    setActive(prev => prev.map((item, index) => index === id ? b : item));
    
   }
+
+  // don't store two arrays, get rid of background color
   const updateAll = (active: Array<number>, dead: Array<number>) => {
     const q = isActive;
-    const r = backgroundColor;
+    // const r = backgroundColor;
     active.map(i => {
       if(i > 0)
         q[i] = true;
-        r[i] = 'white';
+        // r[i] = 'white';
     });
     dead.map(i => {
       if(i > 0)
         q[i] = false;
-        r[i] = 'black';
+        // r[i] = 'black';
     });
-    setBackgroundColor([...r]); 
+    // setBackgroundColor([...r]); 
     setActive([...q]);
+
+    
    
   }
 
@@ -245,6 +250,7 @@ function App() {
       <StartButton isIterating={shouldIterate} onClick={() => setShouldIterate(!shouldIterate)}/>
       <NextButton onClick={() => update()} isIterating={shouldIterate} />
       <BoundaryButton onClick={(e) => updateBoundary(e.shiftKey ? false : true)} isIterating={shouldIterate} />
+      <Rules/>
 
     </div>
   );

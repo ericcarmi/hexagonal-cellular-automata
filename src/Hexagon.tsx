@@ -62,53 +62,51 @@ interface IHexagons {
   updateColor: (n: number, s: string) => void;
 }
 
-
-
-
-
-
 export const Hexagons = ({
   isMouseDown, numRows, numCols, updateColor, hexsize,  backgroundColor, isActive,
 
   }:IHexagons) => {
+
+  const columnArray = [...Array(numCols)].map((_,i) => i);
+  const rowArray = [...Array(numRows)].map((_,i) => i);
   
+                    // left={20+i*hexsize/1.625}
+                    // top={150 +  hexsize/1.625 * j} //+ hexsize/2*(i%2)
   
+  // console.log(hexsize);
 
   // when setting left position, use ceil() to create tiny border around hexagons, round/floor to have no border
   return(
       <Grid onKeyDown={(e) => console.log(e.code)}>
-        {[...Array(numCols)].map((x, i) =>
-          [...Array(numRows)].map((y, j) => 
-          <Dragon key={i*numRows+j} 
+        {columnArray.map((x, i) =>
+          rowArray.map((y, j) => 
+          <Dragon 
+            key={i*numRows+j} 
             hexsize={hexsize}
-            isactive={isActive[i*numRows+j]}
-            // background={backgroundColor[i*numcols+j]}
-            style={{background:backgroundColor[i*numRows+j], 
-                    left:20+i*hexsize/1.625, 
-                    top:150 +  hexsize/1.625 * j //+ hexsize/2*(i%2)
-                  }}
+            left={20 + i*hexsize/1.625}
+            style={{top:150 + hexsize*j/1.625}}
+            background={isActive[i*numRows + j] ? 'white' : 'black'}
             onMouseDown={(e) => {
                   if(e.shiftKey){
-                      updateColor(i*numRows+j, 'black');
+                        updateColor(i*numRows+j, 'black');
                     }
                     else {
-                      updateColor(i*numRows+j, 'white');
+                        updateColor(i*numRows+j, 'white');
                     }
                   } }
             onMouseEnter={(e) => { 
                   if(isMouseDown){
                     if(e.shiftKey){
-                      updateColor(i*numRows+j, 'black');
-              
+                        updateColor(i*numRows+j, 'black');
                     }
                     else {
-                      updateColor(i*numRows+j, 'white');
+                        updateColor(i*numRows+j, 'white');
                     }
                   }
             }}
 
           >
-            {/*i*numRows+j}<br/>{}{Math.floor((i*numRows+j)/2) % numRows < (numRows/2) ? '0' : '1'*/}
+         {/*j}<br/>{}{Math.floor((i*numRows+j)/2) % numRows < (numRows/2) ? '0' : '1'*/}
           </Dragon>
   
       ))}
@@ -161,9 +159,7 @@ const Grid = styled.div`
 `
 
 
-const Dragon = styled.div.attrs((props : {hexsize: number, top : number, left : number, background : string, mousedown : boolean, isactive : boolean}) => props)`
-
-
+const Dragon = styled.div.attrs((props : {hexsize?: number, top?: number, left?: number, background?: string, mousedown?: boolean, isactive?: boolean}) => props)`
   position: absolute;
   width: ${props => props.hexsize}px;
   background: ${props => props.background};
@@ -171,13 +167,11 @@ const Dragon = styled.div.attrs((props : {hexsize: number, top : number, left : 
   font-size:8px;
   border: none;
   outline: none;
-  color: ${props => props.isactive ? 'black' : 'white'};
-  top: calc(${props => props.top} * 1px);
+  // color: ${props => props.isactive ? 'black' : 'white'};
+  top:  calc(${props => props.top} * 1px);
   left: calc(${props => props.left} * 1px);
-  clip-path: polygon(0% 50%, 25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%);
-  // transform: rotateZ(0deg);
+
   user-select: none;
-  transition: background 0.5s;
   justify-content: center;
   align-content: center;
   vertical-align: middle;
@@ -191,18 +185,9 @@ const Dragon = styled.div.attrs((props : {hexsize: number, top : number, left : 
   // transition: transform 0.5s, filter 0.4s;
   // transform: rotateX(60deg) rotateZ(-45deg);  
  
-  transition: background 1s, top 0.3s, left 0.3s;
-transition-delay: left 0.3s, top 0.3s;
+//   transition: background 1s, top 0.3s, left 0.3s;
+// transition-delay: left 0.3s, top 0.3s;
 
-  &:hover {
-    filter: hue-rotate(90deg);
-    // transform: rotate3d(360, 120, -90, 60deg) rotateZ(-45deg) translateZ(10px);
-    
-  }
-  // filter: hue-rotate will change the background color, but setting it won't...because of style={} in the wrapper? then positions don't get set
-  &:active {
-    filter: hue-rotate(-90deg);
-  }
     
 `;
 
