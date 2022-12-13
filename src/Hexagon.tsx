@@ -77,7 +77,7 @@ export const Hexagons = ({
 
   // when setting left position, use ceil() to create tiny border around hexagons, round/floor to have no border
   return(
-      <Grid onKeyDown={(e) => console.log(e.code)}>
+      <Grid>
         {columnArray.map((x, i) =>
           rowArray.map((y, j) => 
           <Dragon 

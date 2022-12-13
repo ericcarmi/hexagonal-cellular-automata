@@ -64,7 +64,7 @@ const [isSelected, setIsSelected] = useState(Array(128).fill(false));
 
 // console.log(mkey*8);
 return(
-  <div style={{position: 'absolute', top: 100 + j*115, left: 30 + i*105 }}>
+  <div style={{position: 'absolute', top: 30 + j*115, left: 30 + i*105 }}>
     <Hexagon
       hexsize={hexsize}
       style={{

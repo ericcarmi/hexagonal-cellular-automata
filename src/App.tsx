@@ -24,6 +24,7 @@ function App() {
   const [interiorCells, setInteriorCells] = useState(Array(0));
   const [shouldIterate, setShouldIterate] = useState(false);
   const [shouldInit, setShouldInit] = useState(true);
+  const [showRules, setShowRules] = useState(false);
 
   // rename to updateCell
   const updateColor = (id:number, newcolor:string) => {
@@ -218,12 +219,14 @@ function App() {
 
   return (
     <div className="App" onMouseDown={() => setMouseDown(true)} onMouseUp={() => setMouseDown(false)}>
-    <Hexagons hexsize={hexsize} isMouseDown={isMouseDown} numRows={numRows} numCols={numCols}
+      <Hexagons hexsize={hexsize} isMouseDown={isMouseDown} numRows={numRows} numCols={numCols}
         isActive={isActive}
         backgroundColor={backgroundColor}
         updateColor={updateColor}
         />
+    <Header isExpanded={false}>
       <RowsInput
+          placeholder={numRows.toString()}
           onChange={(e) => e.target.value}
           onKeyDown={(e) => {
             if(e.code === 'Enter' && !isNaN(Number(e.currentTarget.value))){
@@ -234,6 +237,7 @@ function App() {
           />
     <Rows> rows </Rows>
       <ColsInput
+          placeholder={numCols.toString()}
           onChange={(e) => e.target.value}
           onKeyDown={(e) => {
             if(e.code === 'Enter' && !isNaN(Number(e.currentTarget.value))){
@@ -244,26 +248,48 @@ function App() {
           />
     <Cols> cols </Cols>
       <IntervalInput/>
-    <Interval onChange = {event => console.log(event.target)}> interval </Interval>
+    <Interval onChange = {event => console.log(event.target)}> speed </Interval>
 
       <ResetButton onClick={resetAll}/>
       <StartButton isIterating={shouldIterate} onClick={() => setShouldIterate(!shouldIterate)}/>
       <NextButton onClick={() => update()} isIterating={shouldIterate} />
       <BoundaryButton onClick={(e) => updateBoundary(e.shiftKey ? false : true)} isIterating={shouldIterate} />
+        <ShowRulesButton onClick={() => setShowRules((prev) => !prev)}>rules</ShowRulesButton>
+    </Header>
+    {showRules &&  
+      <div style={{width: '100%', height: '95%', top:'5%', background: 'gray', position: 'absolute'}}>
       <Rules/>
+    </div>}
 
     </div>
   );
 }
 
 
+const ShowRulesButton = styled.div<{}>`
+  position: absolute;
+  width: max-content;
+  height: lh;
+  left: 90%;
+  top: 30%;
+  background: purple;
+  cursor: pointer;
+`;
+
+const Header = styled.div<{isExpanded: boolean}>`
+  position: absolute;
+  width: 100%;
+  height: 5%;
+  background: rgb(30,30,20);
+`;
+
 // number of rows
 const RowsInput = styled.input`
   position: absolute;
   width: 100px;
   height: 20px;
-  right: 100px;
-  top: 10px;
+  left: 25%;
+  top: 5%;
   background: black;
   color: white;
 `
@@ -271,8 +297,8 @@ const Rows = styled.div`
   position: absolute;
   width: 100px;
   height: 20px;
-  right: 200px;
-  top: 0px;
+  left: calc(25% - 75px);
+  top: 5%;
   color: white;
 `
 
@@ -281,8 +307,8 @@ const ColsInput = styled.input`
   position: absolute;
   width: 100px;
   height: 20px;
-  right: 100px;
-  top: 50px;
+  left: 35%;
+  top: 5%;
   background: black;
   color: white;
 `
@@ -291,8 +317,8 @@ const Cols = styled.div`
   position: absolute;
   width: 100px;
   height: 20px;
-  right: 200px;
-  top: 40px;
+  left: calc(35% - 75px);
+  top: 5%;
   color: white;
 `
 
@@ -301,8 +327,8 @@ const IntervalInput = styled.input`
   position: absolute;
   width: 100px;
   height: 20px;
-  right: 100px;
-  top: 90px;
+  left: 45%;
+  top: 5%;
   background: black;
   color: white;
 `
@@ -310,8 +336,8 @@ const Interval = styled.div`
   position: absolute;
   width: 100px;
   height: 20px;
-  right: 220px;
-  top: 80px;
+  left: calc(45% - 75px);
+  top: 5%;
   color: white;
 `
 
@@ -323,7 +349,7 @@ const ResetButton = styled.div`
   background: rgb(150,0,0);
   transition: background 0.1s;
   position: absolute;
-  left: 70%;
+  left: 10%;
   top: 1%;
   cursor: pointer;
   &:hover{
@@ -342,7 +368,7 @@ const StartButton = styled.div<{isIterating: boolean}>`
   background: ${p => p.isIterating ? 'rgb(0,150,0)' : 'rgb(150,50,0)'};
   transition: background 0.1s;
   position: absolute;
-  left: 60%;
+  left: 0%;
   top: 1%;
   cursor: pointer;
 
@@ -363,7 +389,7 @@ const NextButton = styled.div<{isIterating: boolean}>`
   background: ${p => p.isIterating ? 'rgb(150,0,150)' : 'rgb(150,0,150)'};
   transition: background 0.1s;
   position: absolute;
-  left: 65%;
+  left: 5%;
   top: 1%;
   cursor: pointer;
 
@@ -384,7 +410,7 @@ const BoundaryButton = styled.div<{isIterating: boolean}>`
   background: ${p => p.isIterating ? 'rgb(0,0,150)' : 'rgb(0,0,150)'};
   transition: background 0.1s;
   position: absolute;
-  left: 75%;
+  left: 15%;
   top: 1%;
   cursor: pointer;
 
