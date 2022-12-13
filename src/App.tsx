@@ -215,10 +215,32 @@ function App() {
     }
   },[shouldIterate, resetAll])
 
+  useEffect(() => {
+    function handleKeyDown(e: any) {
+      const k = e.key?.toLowerCase();
+      switch(k) {
+      case 'n' : update(); break;
+      case 'p' : setShouldIterate((prev) => !prev); break;
+      case 'b' : updateBoundary(true); break;
+      case 'i' : updateBoundary(false); break;
+      case 'r' : setShowRules(prev => !prev); break;
+      default: break;
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    // Don't forget to clean up
+    return function cleanup() {
+      document.removeEventListener('keydown', handleKeyDown);
+    }
+  }, []);
+
 
 
   return (
-    <div className="App" onMouseDown={() => setMouseDown(true)} onMouseUp={() => setMouseDown(false)}>
+    <div className="App" onMouseDown={() => setMouseDown(true)} onMouseUp={() => setMouseDown(false)}
+      >
       <Hexagons hexsize={hexsize} isMouseDown={isMouseDown} numRows={numRows} numCols={numCols}
         isActive={isActive}
         backgroundColor={backgroundColor}

@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import {useState, useEffect} from 'react';
 import * as dragons from "./polygons";
 
 // rule should have 7 bits, include the center...put this first

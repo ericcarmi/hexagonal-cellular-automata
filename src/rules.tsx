@@ -52,6 +52,21 @@ describe the rule by which bits you want on
 
 */
 
+function padStart(string: string, length: number, char: string) {
+   // can be done via loop too:
+     while (length-- > 0) {
+       string = char + string;
+     }
+   return string;
+}
+
+function numToString(num: number, radix: number,length: number) {
+  const numString = num.toString(radix);
+  return numString.length === length ?
+    numString :
+    padStart(numString, length - numString.length, "0")
+}
+
 interface IRules{
   
 }
@@ -63,12 +78,17 @@ const hexsize = 25;
 const [isSelected, setIsSelected] = useState(Array(128).fill(false));
 
 // console.log(mkey*8);
+
+const binString = numToString(parseInt(mkey.toString(),10),2,7)
+
+  
 return(
-  <div style={{position: 'absolute', top: 30 + j*115, left: 30 + i*105 }}>
+  <div style={{position: 'absolute', top: 20 + j*115, left: 30 + i*105}}>
+      <div style={{position: 'absolute', fontSize: 16, color: 'black', top: 50, left: -20}}> {binString} </div>
     <Hexagon
       hexsize={hexsize}
       style={{
-        background: 'blue',
+        background: binString[0] === '1' ? 'white' : 'black',
         top: 0,
         left: 0,
       }}
@@ -76,39 +96,7 @@ return(
     <Hexagon
       hexsize={hexsize}
       style={{
-        background: 'blue',
-        left: -hexsize/1.25,          
-        top: hexsize/3,
-      }}
-      />
-    <Hexagon
-      hexsize={hexsize}
-      style={{
-        background: 'blue',
-        left: 0,          
-        top: hexsize*2/3,
-      }}
-      />
-    <Hexagon
-      hexsize={hexsize}
-      style={{
-        background: 'blue',
-        left: hexsize/1.25,          
-        top: hexsize/3,
-      }}
-      />
-    <Hexagon
-      hexsize={hexsize}
-      style={{
-        background: 'blue',
-        left: -hexsize/1.25,          
-        top: -hexsize/3,
-      }}
-      />
-    <Hexagon
-      hexsize={hexsize}
-      style={{
-        background: 'blue',
+        background: binString[1] === '1' ? 'white' : 'black',
         left: 0,          
         top: -hexsize*2/3,
       }}
@@ -116,7 +104,39 @@ return(
     <Hexagon
       hexsize={hexsize}
       style={{
-        background: 'blue',
+        background: binString[4] === '1' ? 'white' : 'black',
+        left: 0,          
+        top: hexsize*2/3,
+      }}
+      />
+    <Hexagon
+      hexsize={hexsize}
+      style={{
+        background: binString[5] === '1' ? 'white' : 'black',
+        left: -hexsize/1.25,          
+        top: hexsize/3,
+      }}
+      />
+    <Hexagon
+      hexsize={hexsize}
+      style={{
+        background: binString[3] === '1' ? 'white' : 'black',
+        left: hexsize/1.25,          
+        top: hexsize/3,
+      }}
+      />
+    <Hexagon
+      hexsize={hexsize}
+      style={{
+        background: binString[6] === '1' ? 'white' : 'black',
+        left: -hexsize/1.25,          
+        top: -hexsize/3,
+      }}
+      />
+    <Hexagon
+      hexsize={hexsize}
+      style={{
+        background: binString[2] === '1' ? 'white' : 'black',
         left: hexsize/1.25,          
         top: -hexsize/3,
       }}
@@ -143,12 +163,16 @@ export const Rules = ({}:IRules) => {
     <div style={{width: '100%', height:'100%'}}>
       {[...Array(16)].map((y,i) => 
       [...Array(8)].map((x,j) => 
+  <>
           <Hex7 
-            mkey={i*16+j}
-            key={i*16+j}
+            mkey={i*8+j}
+            key={i*8+j}
             i={i}
             j={j}
           />
+          <div style={{position: 'absolute', left:i*105, top: j*115, width: 105, height: 115,border: '1px solid red',}}>
+          </div>
+</>
         )
       )
 
