@@ -1,56 +1,6 @@
 import styled from 'styled-components';
 import * as dragons from "./polygons";
 
-// rule should have 7 bits, include the center...put this first
-/*
-to get it to oscillate, a set of bits need to be flipped
-start with flower pattern - center hexagon is off, surrounding are on
-0111111 -> 1
-
-then off with single neighbor on
-0000001 -> 1
-0000010 -> 1
-0000100 -> 1
-0001000 -> 1
-0010000 -> 1
-0100000 -> 1
-
-didn't do that but found a cool one...or maybe they will all be decent now they all cells are looped through
-but why is that not right?
-
-because it will keep propagating outward...which is what it does
-when flower is formed, on cells have 2 neighbors, these need to go to zero, which happens, but single neighbors should not be on
-a simple oscillation like that might not be possible with this rule set
-
-how much more complex would the rules have to be?
-there would have to be inter-rule dependence
-multiple options for output rule depending on some parameters
-parameters could be other rules or some other variable?
-
-a general interface for connecting rules together could be complicated...maybe not
-single neighor rules are powers of 2
-
-64 32 16 08 04 02 01
-cn up ur dr dn dl ul
-1  0  0  1  0  1  0 = 74 -> 1 
-1  0  0  0  1  0  1 = 69 -> 1
-1  1  0  0  0  1  0 = 98 -> 1
-1  0  1  0  0  0  1 = 81 -> 1
-1  0  0  1  0  1  0 = 74 -> 1
-1  0  1  0  1  0  0 = 84 -> 1
-
-rule(2) -> (rule(74) && rule(69) && rule(98) && rule(81) && rule(74) && rule(84)) ? 1 : 0
-
-would this work though? rules need to be updated...rules becomes part of the dynamics
-the conditions should be for the next set of rules, rules(i+1) <- rules(i)
-
-*/
-// why are new shifts weird...annoying, jumps around, probably cuz of the grid layout? idk
-        // 0,0,0,0,0,0 ->  
-/*
- 0010000 -> dl when 653
-*/
-
 interface IHexagons {
   isMouseDown? : boolean,
   numRows: number;
@@ -69,8 +19,8 @@ export const Hexagons = ({
   const columnArray = [...Array(numCols)].map((_,i) => i);
   const rowArray = [...Array(numRows)].map((_,i) => i);
   
-                    // left={20+i*hexsize/1.625}
-                    // top={150 +  hexsize/1.625 * j} //+ hexsize/2*(i%2)
+  // left={20+i*hexsize/1.625}
+  // top={150 +  hexsize/1.625 * j} //+ hexsize/2*(i%2)
   
   // console.log(hexsize);
 

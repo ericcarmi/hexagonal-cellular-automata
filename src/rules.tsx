@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 // center, up, up-right, down-right, down, down-left, up-right
 // cn, dn, dl, ul, up, ur, dr 
@@ -6,26 +6,6 @@ import styled from 'styled-components';
 // when you pick all off except down, it will move up
 // cn, up, ur, dr, dn, dl, ul
 // x1  x2  x3  x4  x5  x6  x7 -> y
-export const rules = 
-{
-"0000000" : "0" ,"0000001" : "1" ,"0000010"  : "0" ,"0000011" : "0" ,"0000100" : "1" ,"0000101" : "0" ,"0000110" : "0" ,"0000111" : "0" ,
-"0001000" : "1" ,"0001001" : "0" ,"0001010"  : "0" ,"0001011" : "0" ,"0001100" : "0" ,"0001101" : "0" ,"0001110" : "0" ,"0001111" : "0" ,
-"0010000" : "0" ,"0010001" : "0" ,"0010010"  : "0" ,"0010011" : "0" ,"0010100" : "0" ,"0010101" : "0" ,"0010110" : "0" ,"0010111" : "0" ,
-"0011000" : "0" ,"0011001" : "0" ,"0011010"  : "0" ,"0011011" : "0" ,"0011100" : "0" ,"0011101" : "0" ,"0011110" : "0" ,"0011111" : "0" ,
-"0100000" : "1" ,"0100001" : "0" ,"0100010"  : "0" ,"0100011" : "0" ,"0100100" : "0" ,"0100101" : "0" ,"0100110" : "0" ,"0100111" : "0" ,
-"0101000" : "0" ,"0101001" : "0" ,"0101010"  : "0" ,"0101011" : "0" ,"0101100" : "0" ,"0101101" : "0" ,"0101110" : "0" ,"0101111" : "0" ,
-"0110000" : "0" ,"0110001" : "0" ,"0110010"  : "0" ,"0110011" : "0" ,"0110100" : "0" ,"0110101" : "0" ,"0110110" : "0" ,"0110111" : "0" ,
-"0111000" : "0" ,"0111001" : "0" ,"0111010"  : "0" ,"0111011" : "0" ,"0111100" : "0" ,"0111101" : "0" ,"0111110" : "0" ,"0111111" : "1" ,
-"1000000" : "1" ,"1000001" : "0" ,"1000010"  : "0" ,"1000011" : "0" ,"1000100" : "0" ,"1000101" : "0" ,"1000110" : "0" ,"1000111" : "0" ,
-"1001000" : "0" ,"1001001" : "0" ,"1001010"  : "0" ,"1001011" : "0" ,"1001100" : "0" ,"1001101" : "0" ,"1001110" : "0" ,"1001111" : "0" ,
-"1010000" : "0" ,"1010001" : "0" ,"1010010"  : "0" ,"1010011" : "0" ,"1010100" : "0" ,"1010101" : "0" ,"1010110" : "0" ,"1010111" : "0" ,
-"1011000" : "0" ,"1011001" : "0" ,"1011010"  : "0" ,"1011011" : "0" ,"1011100" : "0" ,"1011101" : "0" ,"1011110" : "0" ,"1011111" : "0" ,
-"1100000" : "0" ,"1100001" : "0" ,"1100010"  : "0" ,"1100011" : "0" ,"1100100" : "0" ,"1100101" : "0" ,"1100110" : "0" ,"1100111" : "0" ,
-"1101000" : "0" ,"1101001" : "0" ,"1101010"  : "0" ,"1101011" : "0" ,"1101100" : "0" ,"1101101" : "0" ,"1101110" : "0" ,"1101111" : "0" ,
-"1110000" : "0" ,"1110001" : "0" ,"1110010"  : "0" ,"1110011" : "0" ,"1110100" : "0" ,"1110101" : "0" ,"1110110" : "0" ,"1110111" : "0" ,
-"1111000" : "0" ,"1111001" : "0" ,"1111010"  : "0" ,"1111011" : "0" ,"1111100" : "0" ,"1111101" : "0" ,"1111110" : "1" ,"1111111" : "0" ,
-}
-
 
 /*
 
@@ -67,26 +47,37 @@ function numToString(num: number, radix: number,length: number) {
     padStart(numString, length - numString.length, "0")
 }
 
-interface IRules{
-  
-}
-
 
 // can't pass in 'key' as prop because it is a 'keyword', but it doens't give that error - annoying
-const Hex7 = ({i,j,mkey} : {i: number, j: number, mkey:number}) => {
+const Hex7 = ({i,j,mkey, rules, setRules} : {i: number, j: number, mkey:number, rules: any, setRules: (val:any) => void}) => {
 const hexsize = 25;
 const [isSelected, setIsSelected] = useState(Array(128).fill(false));
+
+ useEffect(() => {
+   const x = isSelected;
+   let i = 0;
+   for (const [key, value] of Object.entries(rules)) {
+     // console.log(key, value);
+     x[i] = value === '0' ? false : true;
+     i += 1;
+ }
+   setIsSelected(x);
+   
+ },[ rules])
 
 // console.log(mkey*8);
 
 const binString = numToString(parseInt(mkey.toString(),10),2,7)
 
+
   
 return(
-  <div style={{position: 'absolute', top: 20 + j*115, left: 30 + i*105}}>
-      <div style={{position: 'absolute', fontSize: 16, color: 'black', top: 50, left: -20}}> {binString} </div>
+  <div key={'a' + mkey.toString()} style={{position: 'absolute', top: 20 + j*115, left: 30 + i*105}}>
+    <div key={'b' + mkey.toString()}  style={{position: 'absolute',fontFamily:'monospace', fontSize: 16, color: 'black', top: 65, left: -10}}> {binString} </div>
+    <div key={'c' + mkey.toString()} style={{position: 'absolute', top: 25, left: 10}}>
     <Hexagon
       hexsize={hexsize}
+      key={'d' + mkey.toString()} 
       style={{
         background: binString[0] === '1' ? 'white' : 'black',
         top: 0,
@@ -100,6 +91,7 @@ return(
         left: 0,          
         top: -hexsize*2/3,
       }}
+      key={'e' + mkey.toString()} 
       />
     <Hexagon
       hexsize={hexsize}
@@ -108,6 +100,7 @@ return(
         left: 0,          
         top: hexsize*2/3,
       }}
+      key={'f' + mkey.toString()} 
       />
     <Hexagon
       hexsize={hexsize}
@@ -116,6 +109,7 @@ return(
         left: -hexsize/1.25,          
         top: hexsize/3,
       }}
+      key={'g' + mkey.toString()} 
       />
     <Hexagon
       hexsize={hexsize}
@@ -124,6 +118,7 @@ return(
         left: hexsize/1.25,          
         top: hexsize/3,
       }}
+      key={'h' + mkey.toString()} 
       />
     <Hexagon
       hexsize={hexsize}
@@ -132,6 +127,7 @@ return(
         left: -hexsize/1.25,          
         top: -hexsize/3,
       }}
+          key={5}
       />
     <Hexagon
       hexsize={hexsize}
@@ -140,15 +136,24 @@ return(
         left: hexsize/1.25,          
         top: -hexsize/3,
       }}
+      key={'i' + mkey.toString()} 
       />
+    </div>
 
     <Hexagon
-      onClick={() => setIsSelected((prev) => prev.map((item, index) => index === mkey ? !item : item))}
+      onClick={() => {
+          setIsSelected((prev) => prev.map((item, index) => index === mkey ? !item : item));
+
+          const x = rules;
+          x[binString as keyof typeof rules] = isSelected[mkey] === true ? '1' : '0';
+          setRules(x);
+        }}
+      key={'j' + mkey.toString()} 
       hexsize={hexsize}
       style={{
         background: isSelected[mkey] ? 'white' : 'black',
-        left: hexsize*2,          
-        top: 0,
+        left: hexsize*2 - 5,          
+        top: -10,
         cursor: 'pointer',
       }}
       />
@@ -157,22 +162,31 @@ return(
 };
 
 
-export const Rules = ({}:IRules) => {
+interface IRules{
+  rules: any,
+  setRules: any,
+}
+
+
+export const Rules = ({rules, setRules}:IRules) => {
 
   return (
     <div style={{width: '100%', height:'100%'}}>
       {[...Array(16)].map((y,i) => 
       [...Array(8)].map((x,j) => 
-  <>
+        <>
+          <div 
+              style={{position: 'absolute', left:i*105, top: j*115, width: 105, height: 115,border: '1px solid rgb(0,0,100)',}}>
+          </div>
           <Hex7 
-            mkey={i*8+j}
-            key={i*8+j}
+            rules={rules}
+            setRules={setRules}
+            mkey={i+j*16}
+            key={i+j*16}
             i={i}
             j={j}
           />
-          <div style={{position: 'absolute', left:i*105, top: j*115, width: 105, height: 115,border: '1px solid red',}}>
-          </div>
-</>
+        </>
         )
       )
 
