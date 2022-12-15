@@ -49,23 +49,10 @@ function numToString(num: number, radix: number,length: number) {
 
 
 // can't pass in 'key' as prop because it is a 'keyword', but it doens't give that error - annoying
-const Hex7 = ({i,j,mkey, rules, setRules} : {i: number, j: number, mkey:number, rules: any, setRules: (val:any) => void}) => {
+const Hex7 = ({i,j,mkey, rules, setRules, isSelected, setIsSelected} : {
+  i: number, j: number, mkey:number, isSelected: boolean, setIsSelected: (val:any) => void, rules: any, setRules: (val:any) => void}
+) => {
 const hexsize = 25;
-const [isSelected, setIsSelected] = useState(Array(128).fill(false));
-
- useEffect(() => {
-   const x = isSelected;
-   let i = 0;
-   for (const [key, value] of Object.entries(rules)) {
-     // console.log(key, value);
-     x[i] = value === '0' ? false : true;
-     i += 1;
- }
-   setIsSelected(x);
-   
- },[ rules])
-
-// console.log(mkey*8);
 
 const binString = numToString(parseInt(mkey.toString(),10),2,7)
 
@@ -142,16 +129,12 @@ return(
 
     <Hexagon
       onClick={() => {
-          setIsSelected((prev) => prev.map((item, index) => index === mkey ? !item : item));
-
-          const x = rules;
-          x[binString as keyof typeof rules] = isSelected[mkey] === true ? '1' : '0';
-          setRules(x);
+          setIsSelected((prev:any) => prev.map((item:any, index:any) => index === mkey ? !item : item));
         }}
       key={'j' + mkey.toString()} 
       hexsize={hexsize}
       style={{
-        background: isSelected[mkey] ? 'white' : 'black',
+        background: isSelected ? 'white' : 'black',
         left: hexsize*2 - 5,          
         top: -10,
         cursor: 'pointer',
@@ -170,6 +153,22 @@ interface IRules{
 
 export const Rules = ({rules, setRules}:IRules) => {
 
+  const [isSelected, setIsSelected] = useState(Array(128).fill(false));
+
+   useEffect(() => {
+     let i = 0;
+    let r = rules;
+     for (const x of isSelected) {
+       r[numToString(parseInt(i.toString(),10),2,7)] = x === true ? '1' : '0'
+       i += 1;
+     }
+
+    setRules(r);
+    // console.log(rules);
+   
+   },[isSelected, rules, setRules])
+
+
   return (
     <div style={{width: '100%', height:'100%'}}>
       {[...Array(16)].map((y,i) => 
@@ -181,10 +180,12 @@ export const Rules = ({rules, setRules}:IRules) => {
           <Hex7 
             rules={rules}
             setRules={setRules}
-            mkey={i+j*16}
-            key={i+j*16}
+            mkey={i*8+j}
+            key={i*8+j}
             i={i}
             j={j}
+            isSelected={isSelected[i*8+j]}
+            setIsSelected={setIsSelected}
           />
         </>
         )
