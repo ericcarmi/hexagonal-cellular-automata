@@ -7,8 +7,8 @@ import { Rules } from './rules';
 
 function App() {
   const [isMouseDown, setMouseDown] = useState(false);
-  const [numRows, setNumRows] = useState(40);
-  const [numCols, setNumCols] = useState(60);
+  const [numRows, setNumRows] = useState(50);
+  const [numCols, setNumCols] = useState(70);
   const [updateInterval, setUpdateInterval] = useState(100);
   const hexsize = 2 ** 5;
 
@@ -23,7 +23,7 @@ function App() {
       "0101000": "0", "0101001": "0", "0101010": "0", "0101011": "0", "0101100": "0", "0101101": "0", "0101110": "0", "0101111": "0",
       "0110000": "0", "0110001": "0", "0110010": "0", "0110011": "0", "0110100": "0", "0110101": "0", "0110110": "0", "0110111": "0",
       "0111000": "0", "0111001": "0", "0111010": "0", "0111011": "0", "0111100": "0", "0111101": "0", "0111110": "0", "0111111": "0",
-      "1000000": "1", "1000001": "0", "1000010": "0", "1000011": "0", "1000100": "0", "1000101": "0", "1000110": "0", "1000111": "0",
+      "1000000": "0", "1000001": "0", "1000010": "0", "1000011": "0", "1000100": "0", "1000101": "0", "1000110": "0", "1000111": "0",
       "1001000": "0", "1001001": "0", "1001010": "0", "1001011": "0", "1001100": "0", "1001101": "0", "1001110": "0", "1001111": "0",
       "1010000": "0", "1010001": "0", "1010010": "0", "1010011": "0", "1010100": "0", "1010101": "0", "1010110": "0", "1010111": "0",
       "1011000": "0", "1011001": "0", "1011010": "0", "1011011": "0", "1011100": "0", "1011101": "0", "1011110": "0", "1011111": "0",
@@ -33,6 +33,10 @@ function App() {
       "1111000": "0", "1111001": "0", "1111010": "0", "1111011": "0", "1111100": "0", "1111101": "0", "1111110": "0", "1111111": "0",
     });
 
+
+  // two rules that can be saved, so they can be toggled...maybe rules that correspond to different phases? gas, liquid, solid
+
+  const [shouldUseRuleA, setShouldUseRuleA] = useState(true);
 
   // const numrows = 20;
   // const numcols = 20;
@@ -160,6 +164,8 @@ function App() {
   const update = () => {
     let nextActiveCells: Array<number> = [];
     let nextDeadCells: Array<number> = [];
+
+    // looping over interiorcells (or allcells if no bc's) is what needs to be GPU-ified
     interiorCells.map((i) => {
       // const shifts = [-2] // format: up, ur, dr, dn, dl, dr, needs to communicate properly with format of rule
       // is this fixed with recognizing it as a symmetry? many formats are possible
@@ -312,14 +318,17 @@ function App() {
         <BoundaryButton onClick={(e) => updateBoundary(e.shiftKey ? false : true)} isIterating={shouldIterate}>border</BoundaryButton>
         <Button style={{left: 440}} onClick={() => setIsHexagonNotDragon((prev) => !prev)} isIterating={false}>{isHexagonNotDragon ? 'hexagons' : 'dragons'}</Button>
         <ShowRulesButton onClick={() => setShowRules((prev) => !prev)}>rules</ShowRulesButton>
+        <Button style={{textDecoration :  shouldUseRuleA ? 'underline' : '', left: 1330}} onClick={() => setShouldUseRuleA(true)} isIterating={false}>{'rule A'}</Button>
+        <Button style={{textDecoration :  !shouldUseRuleA ? 'underline' : '',left: 1440}} onClick={() => setShouldUseRuleA(false)} isIterating={false}>{'rule B'}</Button>
       </Header>
       <div style={{ zIndex: showRules ? 1 : -1, width: '100%', height: '95%', top: '5%', background: 'gray', position: 'absolute' }}>
-        <Rules rules={rules} setRules={setRules} />
+        <Rules rules={rules} setRules={setRules} shouldUseRuleA={shouldUseRuleA} />
       </div>
 
     </div>
   );
 }
+
 
 
 const ShowRulesButton = styled.div<{}>`

@@ -35,8 +35,8 @@ export const Hexagons = ({
           <Hexagon
             key={i * numRows + j}
             hexsize={hexsize}
-            left={20+i*hexsize*0.75  + (hexsize/2) * i%2}
-            style={{top:150 + hexsize/2/Math.sqrt(3)*(i%2) + hexsize/Math.sqrt(3) * ((j)) }}
+            left={i*hexsize*0.75  + (hexsize/2) * i%2}
+            style={{top:35 + hexsize/2/Math.sqrt(3)*(i%2) + hexsize/Math.sqrt(3) * ((j)) }}
             background={isActive[i * numRows + j] ? 'white' : 'black'}
             onMouseDown={(e) => {
               if (e.shiftKey) {
@@ -73,8 +73,8 @@ export const Hexagons = ({
           <Dragon
             key={i * numRows + j}
             hexsize={hexsize}
-            left={20 + i * hexsize / 1.625}
-            style={{ top: 150 + hexsize * j / 1.625 }}
+            left={i * hexsize / 1.625}
+            style={{ top: 35 + hexsize * j / 1.625 }}
             background={isActive[i * numRows + j] ? 'white' : 'black'}
             onMouseDown={(e) => {
               if (e.shiftKey) {
