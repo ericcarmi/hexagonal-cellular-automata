@@ -153,7 +153,7 @@ interface IRules{
 
 export const Rules = ({rules, setRules}:IRules) => {
 
-  const [isSelected, setIsSelected] = useState(Array(128).fill(false));
+  const [isSelected, setIsSelected] = useState([...Array(128)].map((itm,idx) => rules[numToString(parseInt(idx.toString(),10),2,7)] === '1' ? true : false));
 
    useEffect(() => {
      let i = 0;
@@ -167,6 +167,9 @@ export const Rules = ({rules, setRules}:IRules) => {
     // console.log(rules);
    
    },[isSelected, rules, setRules])
+
+  console.log(rules, isSelected);
+  
 
 
   return (

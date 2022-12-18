@@ -2,75 +2,117 @@ import styled from 'styled-components';
 import * as dragons from "./polygons";
 
 interface IHexagons {
-  isMouseDown? : boolean,
+  isMouseDown?: boolean,
   numRows: number;
   numCols: number;
   hexsize: number;
-  backgroundColor: Array<string>; 
+  backgroundColor: Array<string>;
   isActive: Array<boolean>;
   updateColor: (n: number, s: string) => void;
+  isHexagons: boolean;
 }
 
 export const Hexagons = ({
-  isMouseDown, numRows, numCols, updateColor, hexsize,  backgroundColor, isActive,
+  isMouseDown, numRows, numCols, updateColor, hexsize, backgroundColor, isActive, isHexagons,
 
-  }:IHexagons) => {
+}: IHexagons) => {
 
-  const columnArray = [...Array(numCols)].map((_,i) => i);
-  const rowArray = [...Array(numRows)].map((_,i) => i);
-  
+  const columnArray = [...Array(numCols)].map((_, i) => i);
+  const rowArray = [...Array(numRows)].map((_, i) => i);
+
   // left={20+i*hexsize/1.625}
   // top={150 +  hexsize/1.625 * j} //+ hexsize/2*(i%2)
-  
+
   // console.log(hexsize);
 
   // when setting left position, use ceil() to create tiny border around hexagons, round/floor to have no border
-  return(
-      <Grid>
-        {columnArray.map((x, i) =>
-          rowArray.map((y, j) => 
-          <Dragon 
-            key={i*numRows+j} 
+
+  if(isHexagons){
+  return (
+    <Grid>
+      {columnArray.map((x, i) =>
+        rowArray.map((y, j) =>
+          <Hexagon
+            key={i * numRows + j}
             hexsize={hexsize}
-            left={20 + i*hexsize/1.625}
-            style={{top:150 + hexsize*j/1.625}}
-            background={isActive[i*numRows + j] ? 'white' : 'black'}
+            left={20+i*hexsize*0.75  + (hexsize/2) * i%2}
+            style={{top:150 + hexsize/2/Math.sqrt(3)*(i%2) + hexsize/Math.sqrt(3) * ((j)) }}
+            background={isActive[i * numRows + j] ? 'white' : 'black'}
             onMouseDown={(e) => {
-                  if(e.shiftKey){
-                        updateColor(i*numRows+j, 'black');
-                    }
-                    else {
-                        updateColor(i*numRows+j, 'white');
-                    }
-                  } }
-            onMouseEnter={(e) => { 
-                  if(isMouseDown){
-                    if(e.shiftKey){
-                        updateColor(i*numRows+j, 'black');
-                    }
-                    else {
-                        updateColor(i*numRows+j, 'white');
-                    }
-                  }
+              if (e.shiftKey) {
+                updateColor(i * numRows + j, 'black');
+              }
+              else {
+                updateColor(i * numRows + j, 'white');
+              }
+            }}
+            onMouseEnter={(e) => {
+              if (isMouseDown) {
+                if (e.shiftKey) {
+                  updateColor(i * numRows + j, 'black');
+                }
+                else {
+                  updateColor(i * numRows + j, 'white');
+                }
+              }
             }}
 
           >
-         {/*j}<br/>{}{Math.floor((i*numRows+j)/2) % numRows < (numRows/2) ? '0' : '1'*/}
+            {/*j}<br/>{}{Math.floor((i*numRows+j)/2) % numRows < (numRows/2) ? '0' : '1'*/}
+          </Hexagon>
+
+        ))}
+    </Grid>
+  );}
+
+  else{
+  return (
+    <Grid>
+      {columnArray.map((x, i) =>
+        rowArray.map((y, j) =>
+          <Dragon
+            key={i * numRows + j}
+            hexsize={hexsize}
+            left={20 + i * hexsize / 1.625}
+            style={{ top: 150 + hexsize * j / 1.625 }}
+            background={isActive[i * numRows + j] ? 'white' : 'black'}
+            onMouseDown={(e) => {
+              if (e.shiftKey) {
+                updateColor(i * numRows + j, 'black');
+              }
+              else {
+                updateColor(i * numRows + j, 'white');
+              }
+            }}
+            onMouseEnter={(e) => {
+              if (isMouseDown) {
+                if (e.shiftKey) {
+                  updateColor(i * numRows + j, 'black');
+                }
+                else {
+                  updateColor(i * numRows + j, 'white');
+                }
+              }
+            }}
+
+          >
+            {/*j}<br/>{}{Math.floor((i*numRows+j)/2) % numRows < (numRows/2) ? '0' : '1'*/}
           </Dragon>
-  
-      ))}
-      </Grid>
-  );
+
+        ))}
+    </Grid>
+    
+  )}
 }
 
 
 
-const Hexagon = styled.div.attrs((props : {hexsize: number, top : number, left : number, background : string, mousedown : boolean, isactive : boolean}) => props)`
+const Hexagon = styled.div.attrs((props: { hexsize: number, top: number, left: number, background: string, mousedown: boolean, isactive: boolean }) => props)`
   position: absolute;
   width: ${props => props.hexsize}px;
   background: ${props => props.background};
-  height: ${props => props.hexsize/Math.sqrt(3)}px;
-  font-size:${props => props.hexsize/4}px;
+  height: ${props => props.hexsize / Math.sqrt(3)}px;
+  font-size:${props => props.hexsize / 4}px;
   border: none;
   outline: none;
   color: ${props => props.isactive ? 'black' : 'white'};
@@ -79,7 +121,7 @@ const Hexagon = styled.div.attrs((props : {hexsize: number, top : number, left :
   clip-path: polygon(0% 50%, 25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%);
   // transform: rotateZ(0deg);
   user-select: none;
-  transition: background 1s, top 0.3s, left 0.3s;
+  transition: background 0s, top 0.3s, left 0.3s;
 transition-delay: left 0.3s, top 0.3s;
   justify-content: center;
   align-content: center;
@@ -87,7 +129,7 @@ transition-delay: left 0.3s, top 0.3s;
   // line-height: 50px;
 `
 
-const HexagonBorder = styled.div.attrs((props : {top : number, left : number, background : string, mousedown : boolean, isactive : boolean}) => props)`
+const HexagonBorder = styled.div.attrs((props: { top: number, left: number, background: string, mousedown: boolean, isactive: boolean }) => props)`
   position: absolute;
   width: 105%
   background: ${props => props.background};
@@ -108,7 +150,7 @@ const Grid = styled.div`
 `
 
 
-const Dragon = styled.div.attrs((props : {hexsize?: number, top?: number, left?: number, background?: string, mousedown?: boolean, isactive?: boolean}) => props)`
+const Dragon = styled.div.attrs((props: { hexsize?: number, top?: number, left?: number, background?: string, mousedown?: boolean, isactive?: boolean }) => props)`
   position: absolute;
   width: ${props => props.hexsize}px;
   background: ${props => props.background};
