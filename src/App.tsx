@@ -312,14 +312,14 @@ function App() {
         />
         <Interval> speed </Interval>
 
-        <StartButton isIterating={shouldIterate} onClick={() => setShouldIterate(!shouldIterate)}>{shouldIterate ? 'pause' : 'start'}</StartButton>
-        <NextButton onClick={() => update()} isIterating={shouldIterate}>next</NextButton>
-        <ResetButton onClick={resetAll}>reset</ResetButton>
-        <BoundaryButton onClick={(e) => updateBoundary(e.shiftKey ? false : true)} isIterating={shouldIterate}>border</BoundaryButton>
+        <StartButton isIterating={shouldIterate} onClick={() => setShouldIterate(!shouldIterate)}><b>p</b>{shouldIterate ? 'ause' : 'lay'}</StartButton>
+        <NextButton onClick={() => update()} isIterating={shouldIterate}><b>n</b>ext</NextButton>
+        <ResetButton onClick={resetAll}><b>c</b>lear</ResetButton>
+        <BoundaryButton onClick={(e) => updateBoundary(e.shiftKey ? false : true)} isIterating={shouldIterate}><b>b</b>order</BoundaryButton>
         <Button style={{left: 440}} onClick={() => setIsHexagonNotDragon((prev) => !prev)} isIterating={false}>{isHexagonNotDragon ? 'hexagons' : 'dragons'}</Button>
-        <ShowRulesButton onClick={() => setShowRules((prev) => !prev)}>rules</ShowRulesButton>
-        <Button style={{textDecoration :  shouldUseRuleA ? 'underline' : '', left: 1330}} onClick={() => setShouldUseRuleA(true)} isIterating={false}>{'rule A'}</Button>
-        <Button style={{textDecoration :  !shouldUseRuleA ? 'underline' : '',left: 1440}} onClick={() => setShouldUseRuleA(false)} isIterating={false}>{'rule B'}</Button>
+        <Button className="show rule button" style={{left: 1550}} onClick={() => setShowRules((prev) => !prev)}><b>r</b>ules</Button>
+        <Button style={{textDecoration :  shouldUseRuleA ? 'underline' : '', left: 1330}} onClick={() => setShouldUseRuleA(true)} >{'rule A'}</Button>
+        <Button style={{textDecoration :  !shouldUseRuleA ? 'underline' : '',left: 1440}} onClick={() => setShouldUseRuleA(false)} >{'rule B'}</Button>
       </Header>
       <div style={{ zIndex: showRules ? 1 : -1, width: '100%', height: '95%', top: '5%', background: 'gray', position: 'absolute' }}>
         <Rules rules={rules} setRules={setRules} shouldUseRuleA={shouldUseRuleA} />
@@ -337,10 +337,11 @@ const ShowRulesButton = styled.div<{}>`
   font-size: 20px;
   vertical-align: middle;
   line-height: 1.5em;
-  background: rgb(100,0,100);
+  background: rgb(50,50,100);
+  color: rgb(250,200,200);
   transition: background 0.1s;
   position: absolute;
-  left: 90%;
+  left: 1550px;
   top: 1%;
   cursor: pointer;
 
@@ -362,6 +363,7 @@ const RowsInput = styled.input`
   top: 5%;
   background: black;
   color: white;
+  border-radius: 5px;
 `
 const Rows = styled.div`
   position: absolute;
@@ -418,18 +420,19 @@ const StartButton = styled.div<{ isIterating: boolean }>`
   font-size: 20px;
   vertical-align: middle;
   line-height: 1.5em;
-  background: ${p => p.isIterating ? 'rgb(0,150,0)' : 'rgb(150,50,0)'};
+  background: ${p => p.isIterating ? 'rgb(50,150,100)' : 'rgb(50,50,100)'};
+  color: rgb(250,200,200);
   transition: background 0.1s;
   position: absolute;
   left: 0px;
   cursor: pointer;
 
   &:hover{
-    background: ${p => p.isIterating ? 'rgb(0,180,0)' : 'rgb(180,80,0)'};
+    background: rgb(80,80,130);
   }  
 
   &:active{
-    background: ${p => p.isIterating ? 'rgb(0,220,0)' : 'rgb(220,110,0)'};
+    background: rgb(100,100,150);
   }  
 
 
@@ -440,7 +443,9 @@ const NextButton = styled.div<{ isIterating: boolean }>`
   font-size: 20px;
   vertical-align: middle;
   line-height: 1.5em;
-  background: ${p => p.isIterating ? 'rgb(150,0,150)' : 'rgb(150,0,150)'};
+  background: rgb(50,50,100);
+  color: rgb(250,200,200);
+  text-decoration: ${p => p.isIterating ? 'line-through' : ''};
   transition: background 0.1s;
   position: absolute;
   left: 110px;
@@ -463,7 +468,8 @@ const ResetButton = styled.div`
   font-size: 20px;
   vertical-align: middle;
   line-height: 1.5em;
-  background: rgb(150,0,0);
+  background: rgb(50,50,100);
+  color: rgb(250,200,200);
   transition: background 0.1s;
   position: absolute;
   left: 220px;
@@ -485,6 +491,8 @@ const BoundaryButton = styled.div<{ isIterating: boolean }>`
   vertical-align: middle;
   line-height: 1.5em;
   background: ${p => p.isIterating ? 'rgb(0,0,150)' : 'rgb(0,0,150)'};
+  background: rgb(50,50,100);
+  color: rgb(250,200,200);
   transition: background 0.1s;
   position: absolute;
   left: 330px;
@@ -500,25 +508,25 @@ const BoundaryButton = styled.div<{ isIterating: boolean }>`
 
 `
 
-const Button = styled.div<{ isIterating: boolean }>`
+const Button = styled.div<{ isIterating?: boolean }>`
   width: 100px;
   height: 30px;
   font-size: 20px;
   vertical-align: middle;
   line-height: 1.5em;
-  background: ${p => p.isIterating ? 'rgb(0,0,150)' : 'rgb(0,0,150)'};
+  background: rgb(50,50,100);
+  color: rgb(250,200,200);
   transition: background 0.1s;
   position: absolute;
   left: 330px;
   cursor: pointer;
-  color: rgb(202,202,202);
 
   &:hover{
-    background: ${p => p.isIterating ? 'rgb(0,0,190)' : 'rgb(0,0,190)'};
+    background: rgb(80,80,130);
   }  
 
   &:active{
-    background: ${p => p.isIterating ? 'rgb(0,0,220)' : 'rgb(0,0,220)'};
+    background: rgb(100,100,150);
   }  
 
 `;
