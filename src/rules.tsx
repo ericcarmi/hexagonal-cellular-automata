@@ -220,7 +220,6 @@ export const Rules = ({ rules, setRules, shouldUseRuleA, }: IRules) => {
       setRules(ruleB);
       setIsSelected([...Array(128)].map((itm, idx) => ruleB[numToString(parseInt(idx.toString(), 10), 2, 7) as keyof typeof ruleB] === '1' ? true : false));
     }
-    console.log('A', ruleA, 'B', ruleB);
   },[shouldUseRuleA, setRules, rules, setIsSelected])
 
   // console.log(rules, isSelected);
@@ -231,9 +230,13 @@ export const Rules = ({ rules, setRules, shouldUseRuleA, }: IRules) => {
     <div style={{ width: '100%', height: '100%' }}>
       {[...Array(16)].map((y, i) =>
         [...Array(8)].map((x, j) =>
-          <>
+          <div
+              key={'wrap' + i * 8 + j}
+            >
             <div
-              style={{ position: 'absolute', left: i * 105, top: j * 115, width: 105, height: 115, border: '1px solid rgb(0,0,100)', }}>
+              style={{ position: 'absolute', left: i * 105, top: j * 115, width: 105, height: 115, border: '1px solid rgb(0,0,100)', }}
+              key={-i * 8 - j - 1}
+              >
             </div>
             <Hex7
               rules={rules}
@@ -245,7 +248,7 @@ export const Rules = ({ rules, setRules, shouldUseRuleA, }: IRules) => {
               isSelected={isSelected[i * 8 + j]}
               setIsSelected={setIsSelected}
             />
-          </>
+          </div>
         )
       )
 

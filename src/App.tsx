@@ -1,16 +1,17 @@
 import styled from 'styled-components';
 import './App.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Hexagons } from './Hexagon';
 import { Rules } from './rules';
+import { Canvas } from './CanvasHexagons';
 
 
 function App() {
   const [isMouseDown, setMouseDown] = useState(false);
-  const [numRows, setNumRows] = useState(50);
-  const [numCols, setNumCols] = useState(70);
+  const [numRows, setNumRows] = useState(10);
+  const [numCols, setNumCols] = useState(12);
   const [updateInterval, setUpdateInterval] = useState(100);
-  const hexsize = 2 ** 5;
+  const hexsize = 2 ** 7;
 
 
   const [rules, setRules] = useState(
@@ -23,20 +24,20 @@ function App() {
       "0101000": "0", "0101001": "0", "0101010": "0", "0101011": "0", "0101100": "0", "0101101": "0", "0101110": "0", "0101111": "0",
       "0110000": "0", "0110001": "0", "0110010": "0", "0110011": "0", "0110100": "0", "0110101": "0", "0110110": "0", "0110111": "0",
       "0111000": "0", "0111001": "0", "0111010": "0", "0111011": "0", "0111100": "0", "0111101": "0", "0111110": "0", "0111111": "0",
-      "1000000": "0", "1000001": "0", "1000010": "0", "1000011": "0", "1000100": "0", "1000101": "0", "1000110": "0", "1000111": "0",
-      "1001000": "0", "1001001": "0", "1001010": "0", "1001011": "0", "1001100": "0", "1001101": "0", "1001110": "0", "1001111": "0",
-      "1010000": "0", "1010001": "0", "1010010": "0", "1010011": "0", "1010100": "0", "1010101": "0", "1010110": "0", "1010111": "0",
-      "1011000": "0", "1011001": "0", "1011010": "0", "1011011": "0", "1011100": "0", "1011101": "0", "1011110": "0", "1011111": "0",
-      "1100000": "0", "1100001": "0", "1100010": "0", "1100011": "0", "1100100": "0", "1100101": "0", "1100110": "0", "1100111": "0",
-      "1101000": "0", "1101001": "0", "1101010": "0", "1101011": "0", "1101100": "0", "1101101": "0", "1101110": "0", "1101111": "0",
-      "1110000": "0", "1110001": "0", "1110010": "0", "1110011": "0", "1110100": "0", "1110101": "0", "1110110": "0", "1110111": "0",
-      "1111000": "0", "1111001": "0", "1111010": "0", "1111011": "0", "1111100": "0", "1111101": "0", "1111110": "0", "1111111": "0",
+      "1000000": "0", "1000001": "1", "1000010": "1", "1000011": "1", "1000100": "1", "1000101": "1", "1000110": "1", "1000111": "1",
+      "1001000": "1", "1001001": "1", "1001010": "1", "1001011": "1", "1001100": "1", "1001101": "1", "1001110": "1", "1001111": "1",
+      "1010000": "1", "1010001": "1", "1010010": "1", "1010011": "1", "1010100": "1", "1010101": "1", "1010110": "1", "1010111": "1",
+      "1011000": "1", "1011001": "1", "1011010": "1", "1011011": "1", "1011100": "1", "1011101": "1", "1011110": "1", "1011111": "1",
+      "1100000": "1", "1100001": "1", "1100010": "1", "1100011": "1", "1100100": "1", "1100101": "1", "1100110": "1", "1100111": "1",
+      "1101000": "1", "1101001": "1", "1101010": "1", "1101011": "1", "1101100": "1", "1101101": "1", "1101110": "1", "1101111": "1",
+      "1110000": "1", "1110001": "1", "1110010": "1", "1110011": "1", "1110100": "1", "1110101": "1", "1110110": "1", "1110111": "1",
+      "1111000": "1", "1111001": "1", "1111010": "1", "1111011": "1", "1111100": "1", "1111101": "1", "1111110": "1", "1111111": "1",
     });
 
 
   // two rules that can be saved, so they can be toggled...maybe rules that correspond to different phases? gas, liquid, solid
 
-  const [shouldUseRuleA, setShouldUseRuleA] = useState(true);
+  const [shouldUseRuleA, setShouldUseRuleA] = useState(false);
 
   // const numrows = 20;
   // const numcols = 20;
@@ -237,15 +238,15 @@ function App() {
   // },[updateColor,])
 
   // or you don't need to pass row,col? just figure it out by the number in activeCell? just even or odd
-  useEffect(() => {
-    if (shouldIterate) {
-      const interval = setInterval(() => {
-        update();
+  // useEffect(() => {
+  //   if (shouldIterate) {
+  //     const interval = setInterval(() => {
+  //       update();
 
-      }, updateInterval);
-      return () => clearInterval(interval);
-    }
-  }, [shouldIterate, resetAll])
+  //     }, updateInterval);
+  //     return () => clearInterval(interval);
+  //   }
+  // }, [shouldIterate, resetAll])
 
   useEffect(() => {
     // not handling pressing and holding yet...no it does, but it isn't a smooth update
@@ -256,7 +257,7 @@ function App() {
         case 'p': setShouldIterate((prev) => !prev); break;
         case 'b': updateBoundary(true); break;
         case 'i': updateBoundary(false); break;
-        case 'r': setShowRules(prev => !prev); break;
+        // case 'r': setShowRules(prev => !prev); break;
         case 'c': e.shiftKey && resetAll(); break;
         default: break;
       }
@@ -268,15 +269,16 @@ function App() {
   }, [update]);
 
 
+  const canvasRef = useRef(null);
 
   return (
     <div className="App" onMouseDown={() => setMouseDown(true)} onMouseUp={() => setMouseDown(false)}
     >
-      <Hexagons isHexagons={isHexagonNotDragon} hexsize={hexsize} isMouseDown={isMouseDown} numRows={numRows} numCols={numCols}
+      {/*<Hexagons isHexagons={isHexagonNotDragon} hexsize={hexsize} isMouseDown={isMouseDown} numRows={numRows} numCols={numCols}
         isActive={isActive}
         backgroundColor={backgroundColor}
         updateColor={updateColor}
-      />
+      />*/}
       <Header isExpanded={false}>
         <RowsInput
           placeholder={numRows.toString()}
@@ -321,9 +323,14 @@ function App() {
         <Button style={{textDecoration :  shouldUseRuleA ? 'underline' : '', left: 1330}} onClick={() => setShouldUseRuleA(true)} >{'rule A'}</Button>
         <Button style={{textDecoration :  !shouldUseRuleA ? 'underline' : '',left: 1440}} onClick={() => setShouldUseRuleA(false)} >{'rule B'}</Button>
       </Header>
-      <div style={{ zIndex: showRules ? 1 : -1, width: '100%', height: '95%', top: '5%', background: 'gray', position: 'absolute' }}>
+
+      {<Canvas
+        rules={rules}
+        canvasRef={canvasRef}
+        />}
+      {showRules && <div style={{ width: '100%', height: '95%', top: '5%', background: 'gray', position: 'absolute' }}>
         <Rules rules={rules} setRules={setRules} shouldUseRuleA={shouldUseRuleA} />
-      </div>
+      </div>}
 
     </div>
   );

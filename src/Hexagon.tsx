@@ -58,6 +58,7 @@ export const Hexagons = ({
             }}
 
           >
+              {(i*numRows+j).toString()}
             {/*j}<br/>{}{Math.floor((i*numRows+j)/2) % numRows < (numRows/2) ? '0' : '1'*/}
           </Hexagon>
 
@@ -115,7 +116,7 @@ const Hexagon = styled.div.attrs((props: { hexsize: number, top: number, left: n
   font-size:${props => props.hexsize / 4}px;
   border: none;
   outline: none;
-  color: ${props => props.isactive ? 'black' : 'white'};
+  color: red;
   top: calc(${props => props.top} * 1px);
   left: calc(${props => props.left} * 1px);
   clip-path: polygon(0% 50%, 25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%);

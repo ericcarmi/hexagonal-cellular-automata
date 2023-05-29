@@ -12,9 +12,9 @@ export const extraShift = 10
 const SQRT_3 = Math.sqrt(3)
 
 
-const hexSize = 20.0;
-const numCols = 20
-const numRows = 17
+const hexSize = 4.0;
+const numCols = 320
+const numRows = 200
 const isHexagonNotDragon = true;
 
 const hex_array: Complex[] = [];
@@ -22,13 +22,13 @@ const hex_array: Complex[] = [];
 const theta = Math.PI / 6
 
 for (let i = 0; i < 6; i++) {
-  const x = hexSize * Math.cos(2 * theta * i - Math.PI / 6) + 100;
-  const y = hexSize * Math.sin(2 * theta * i - Math.PI / 6) + 100;
+  const x = hexSize * Math.cos(2 * theta * i - Math.PI / 6) + 20;
+  const y = hexSize * Math.sin(2 * theta * i - Math.PI / 6) + 50;
   hex_array.push(new Complex(x, y))
 
 }
 
-let hexagons: Array<boolean> = Array(numRows * numCols).fill(false).map((_, i) => i == 211);
+let hexagons: Array<boolean> = Array(numRows * numCols).fill(false).map((_, i) => i == numCols*numRows/2 + numCols / 2);
 
 interface ICanvas {
   canvasRef: any;
@@ -73,10 +73,9 @@ export const Canvas = ({
       let neighbors = hexagons[i] ? '1' : '0';
       shifts.map((s, _) => {
         const a = s + i;
-        if (hexagons[i]) {
-
-          console.log(i, a, rowCount)
-        }
+        // if (hexagons[i]) {
+        //   console.log(i, a, rowCount)
+        // }
         if (a > 0) {
           if (hexagons[a]) {
             neighbors += '1';
@@ -132,30 +131,22 @@ export const Canvas = ({
       ctx.lineTo(SQRT_3 * hexSize * (i % numCols) + hex_array[0].real + shift, 1.5 * hexSize * rowCount + hex_array[0].im);
       ctx.fill();
 
-
       if (i % numCols == numCols - 1) {
         rowCount += 1
       }
-
-
     }
 
 
-
-
-    ctx.fillStyle = "#ffffff"
-    rowCount = 0;
-    for (let i = 0; i < numCols * numRows; i++) {
-      const shift = rowCount % 2 == 0 ? hexSize * 0.0 : SQRT_3 / 2 * hexSize
-      parity += 1
-      ctx.fillText((i).toString(), SQRT_3 * hexSize * (i % numCols) + hex_array[4].real + shift, 1.5 * hexSize * rowCount + hex_array[4].im)
-      if (i % numCols == numCols - 1) {
-        rowCount += 1
-      }
-
-
-
-    }
+    // ctx.fillStyle = "#ffffff"
+    // rowCount = 0;
+    // for (let i = 0; i < numCols * numRows; i++) {
+    //   const shift = rowCount % 2 == 0 ? hexSize * 0.0 : SQRT_3 / 2 * hexSize
+    //   parity += 1
+    //   ctx.fillText((i).toString(), SQRT_3 * hexSize * (i % numCols) + hex_array[4].real + shift, 1.5 * hexSize * rowCount + hex_array[4].im)
+    //   if (i % numCols == numCols - 1) {
+    //     rowCount += 1
+    //   }
+    // }
 
   }
 
@@ -168,7 +159,7 @@ export const Canvas = ({
     const context = canvas.getContext('2d')
 
     const render = () => {
-      // checkNeighbors();
+      checkNeighbors();
 
       frameCount += 1;
       draw(context, frameCount, shouldClear)
@@ -181,19 +172,13 @@ export const Canvas = ({
     }
   }, [draw, canvasRef, checkNeighbors])
 
-  useEffect(() => {
-    // console.log(hexagons)
-
-  }, [hexagons])
-
-
 
   return (
     <canvas
       id={'canvas'}
       onMouseDown={(e) => {
         // console.log(e.clientX, e.clientY)
-        checkNeighbors();
+        // checkNeighbors();
       }}
       width={1920 - 50}
       height={1000}
