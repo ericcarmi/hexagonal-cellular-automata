@@ -24,14 +24,14 @@ function App() {
       "0101000": "0", "0101001": "0", "0101010": "0", "0101011": "0", "0101100": "0", "0101101": "0", "0101110": "0", "0101111": "0",
       "0110000": "0", "0110001": "0", "0110010": "0", "0110011": "0", "0110100": "0", "0110101": "0", "0110110": "0", "0110111": "0",
       "0111000": "0", "0111001": "0", "0111010": "0", "0111011": "0", "0111100": "0", "0111101": "0", "0111110": "0", "0111111": "0",
-      "1000000": "0", "1000001": "1", "1000010": "1", "1000011": "1", "1000100": "1", "1000101": "1", "1000110": "1", "1000111": "1",
-      "1001000": "1", "1001001": "1", "1001010": "1", "1001011": "1", "1001100": "1", "1001101": "1", "1001110": "1", "1001111": "1",
-      "1010000": "1", "1010001": "1", "1010010": "1", "1010011": "1", "1010100": "1", "1010101": "1", "1010110": "1", "1010111": "1",
-      "1011000": "1", "1011001": "1", "1011010": "1", "1011011": "1", "1011100": "1", "1011101": "1", "1011110": "1", "1011111": "1",
-      "1100000": "1", "1100001": "1", "1100010": "1", "1100011": "1", "1100100": "1", "1100101": "1", "1100110": "1", "1100111": "1",
-      "1101000": "1", "1101001": "1", "1101010": "1", "1101011": "1", "1101100": "1", "1101101": "1", "1101110": "1", "1101111": "1",
-      "1110000": "1", "1110001": "1", "1110010": "1", "1110011": "1", "1110100": "1", "1110101": "1", "1110110": "1", "1110111": "1",
-      "1111000": "1", "1111001": "1", "1111010": "1", "1111011": "1", "1111100": "1", "1111101": "1", "1111110": "1", "1111111": "1",
+      "1000000": "0", "1000001": "0", "1000010": "0", "1000011": "0", "1000100": "0", "1000101": "0", "1000110": "0", "1000111": "0",
+      "1001000": "0", "1001001": "0", "1001010": "0", "1001011": "0", "1001100": "0", "1001101": "0", "1001110": "0", "1001111": "0",
+      "1010000": "0", "1010001": "0", "1010010": "0", "1010011": "0", "1010100": "0", "1010101": "0", "1010110": "0", "1010111": "0",
+      "1011000": "0", "1011001": "0", "1011010": "0", "1011011": "0", "1011100": "0", "1011101": "0", "1011110": "0", "1011111": "0",
+      "1100000": "0", "1100001": "0", "1100010": "0", "1100011": "0", "1100100": "0", "1100101": "0", "1100110": "0", "1100111": "0",
+      "1101000": "0", "1101001": "0", "1101010": "0", "1101011": "0", "1101100": "0", "1101101": "0", "1101110": "0", "1101111": "0",
+      "1110000": "0", "1110001": "0", "1110010": "0", "1110011": "0", "1110100": "0", "1110101": "0", "1110110": "0", "1110111": "0",
+      "1111000": "0", "1111001": "0", "1111010": "0", "1111011": "0", "1111100": "0", "1111101": "0", "1111110": "0", "1111111": "0",
     });
 
 
@@ -49,9 +49,12 @@ function App() {
   const [boundaryCells, setBoundaryCells] = useState(Array(0));
   const [interiorCells, setInteriorCells] = useState(Array(0));
   const [shouldIterate, setShouldIterate] = useState(false);
+  const [shouldReset, setShouldReset] = useState(false);
+  const [shouldStepOnce, setShouldStepOnce] = useState(false);
   const [shouldInit, setShouldInit] = useState(true);
   const [showRules, setShowRules] = useState(false);
   const [isHexagonNotDragon, setIsHexagonNotDragon] = useState(true);
+  const [isCellularAutomata, setIsCellularAutomata] = useState(true);
 
   // rename to updateCell
   const updateColor = (id: number, newcolor: string) => {
@@ -253,12 +256,12 @@ function App() {
     function handleKeyDown(e: any) {
       const k = e.key?.toLowerCase();
       switch (k) {
-        case 'n': update(); break;
+        case 'n': update(); setShouldStepOnce(true); break;
         case 'p': setShouldIterate((prev) => !prev); break;
         case 'b': updateBoundary(true); break;
         case 'i': updateBoundary(false); break;
-        // case 'r': setShowRules(prev => !prev); break;
-        case 'c': e.shiftKey && resetAll(); break;
+        case 'r': setShowRules(prev => !prev); break;
+        case 'c': e.shiftKey && resetAll(); setShouldReset(true); break;
         default: break;
       }
     }
@@ -270,6 +273,11 @@ function App() {
 
 
   const canvasRef = useRef(null);
+
+  // useEffect(() => {
+  //   console.log(rules)
+  // },[rules, setRules])
+
 
   return (
     <div className="App" onMouseDown={() => setMouseDown(true)} onMouseUp={() => setMouseDown(false)}
@@ -315,20 +323,37 @@ function App() {
         <Interval> speed </Interval>
 
         <StartButton isIterating={shouldIterate} onClick={() => setShouldIterate(!shouldIterate)}><b>p</b>{shouldIterate ? 'ause' : 'lay'}</StartButton>
-        <NextButton onClick={() => update()} isIterating={shouldIterate}><b>n</b>ext</NextButton>
-        <ResetButton onClick={resetAll}><b>c</b>lear</ResetButton>
+        <NextButton onClick={() => {
+          update();
+          setShouldStepOnce(true);
+        }
+        } isIterating={shouldIterate}><b>n</b>ext</NextButton>
+        <ResetButton onClick={() => {
+          resetAll();
+          setShouldReset(true)
+
+        }
+        }><b>c</b>lear</ResetButton>
         <BoundaryButton onClick={(e) => updateBoundary(e.shiftKey ? false : true)} isIterating={shouldIterate}><b>b</b>order</BoundaryButton>
-        <Button style={{left: 440}} onClick={() => setIsHexagonNotDragon((prev) => !prev)} isIterating={false}>{isHexagonNotDragon ? 'hexagons' : 'dragons'}</Button>
-        <Button className="show rule button" style={{left: 1550}} onClick={() => setShowRules((prev) => !prev)}><b>r</b>ules</Button>
-        <Button style={{textDecoration :  shouldUseRuleA ? 'underline' : '', left: 1330}} onClick={() => setShouldUseRuleA(true)} >{'rule A'}</Button>
-        <Button style={{textDecoration :  !shouldUseRuleA ? 'underline' : '',left: 1440}} onClick={() => setShouldUseRuleA(false)} >{'rule B'}</Button>
+        <Button style={{ left: 440 }} onClick={() => setIsHexagonNotDragon((prev) => !prev)} isIterating={false}>{isHexagonNotDragon ? 'hexagons' : 'dragons'}</Button>
+        <Button style={{ left: 1200 }} onClick={() => setIsCellularAutomata((prev) => !prev)} isIterating={false}>{isCellularAutomata ? 'cells' : 'macro'}</Button>
+        <Button className="show rule button" style={{ left: 1550 }} onClick={() => setShowRules((prev) => !prev)}><b>r</b>ules</Button>
+        <Button style={{ textDecoration: shouldUseRuleA ? 'underline' : '', left: 1330 }} onClick={() => setShouldUseRuleA(true)} >{'rule A'}</Button>
+        <Button style={{ textDecoration: !shouldUseRuleA ? 'underline' : '', left: 1440 }} onClick={() => setShouldUseRuleA(false)} >{'rule B'}</Button>
       </Header>
 
-      {<Canvas
+      <Canvas
         rules={rules}
         canvasRef={canvasRef}
-        />}
-      {showRules && <div style={{ width: '100%', height: '95%', top: '5%', background: 'gray', position: 'absolute' }}>
+        shouldIterate={shouldIterate}
+        shouldReset={shouldReset}
+        setShouldReset={setShouldReset}
+        shouldStepOnce={shouldStepOnce}
+        setShouldStepOnce={setShouldStepOnce}
+        isCellular={isCellularAutomata}
+
+      />
+      {<div style={{ zIndex: showRules ? 1 : -1, top: 30, position: 'absolute' }}>
         <Rules rules={rules} setRules={setRules} shouldUseRuleA={shouldUseRuleA} />
       </div>}
 

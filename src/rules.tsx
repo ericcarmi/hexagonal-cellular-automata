@@ -32,6 +32,11 @@ describe the rule by which bits you want on
 
 */
 
+
+const cell_width = 107.8;
+const cell_height = 117;
+const hexsize = 30;
+
 function padStart(string: string, length: number, char: string) {
   // can be done via loop too:
   while (length-- > 0) {
@@ -53,16 +58,15 @@ const Hex7 = ({ i, j, mkey, rules, setRules, isSelected, setIsSelected }: {
   i: number, j: number, mkey: number, isSelected: boolean, setIsSelected: (val: any) => void, rules: any, setRules: (val: any) => void
 }
 ) => {
-  const hexsize = 25;
 
   const binString = numToString(parseInt(mkey.toString(), 10), 2, 7)
 
 
 
   return (
-    <div key={'a' + mkey.toString()} style={{ position: 'absolute', top: 20 + j * 115, left: 30 + i * 105 }}>
-      <div key={'b' + mkey.toString()} style={{ position: 'absolute', fontFamily: 'monospace', fontSize: 16, color: 'black', top: 65, left: -10 }}> {binString} </div>
-      <div key={'c' + mkey.toString()} style={{ position: 'absolute', top: 25, left: 10 }}>
+    <div key={'a' + mkey.toString()} style={{ position: 'absolute', top: hexsize + j * cell_height, left: 30 + i * cell_width }}>
+      <div key={'b' + mkey.toString()} style={{ position: 'absolute', fontFamily: 'monospace', fontSize: 16, color: 'black', top: 70, left: -10 }}> {binString} </div>
+      <div key={'c' + mkey.toString()} style={{ position: 'absolute', top: hexsize, left: 10 }}>
         <Hexagon
           hexsize={hexsize}
           key={'d' + mkey.toString()}
@@ -136,8 +140,8 @@ const Hex7 = ({ i, j, mkey, rules, setRules, isSelected, setIsSelected }: {
         hexsize={hexsize}
         style={{
           background: isSelected ? 'white' : 'black',
-          left: hexsize * 2 - 5,
-          top: -10,
+          left: hexsize * 2 - hexsize/2,
+          top: -20,
           cursor: 'pointer',
         }}
       />
@@ -206,37 +210,44 @@ export const Rules = ({ rules, setRules, shouldUseRuleA, }: IRules) => {
     }
 
     setRules(r);
-    // console.log(rules);
 
   }, [isSelected, rules, setRules])
 
 
   useEffect(() => {
-    if(shouldUseRuleA) {
+    if (shouldUseRuleA) {
       setRules(ruleA);
       setIsSelected([...Array(128)].map((itm, idx) => ruleA[numToString(parseInt(idx.toString(), 10), 2, 7) as keyof typeof ruleA] === '1' ? true : false));
     }
-    else{
+    else {
       setRules(ruleB);
       setIsSelected([...Array(128)].map((itm, idx) => ruleB[numToString(parseInt(idx.toString(), 10), 2, 7) as keyof typeof ruleB] === '1' ? true : false));
     }
-  },[shouldUseRuleA, setRules, rules, setIsSelected])
+  }, [shouldUseRuleA, setRules, rules, setIsSelected])
 
   // console.log(rules, isSelected);
 
 
 
   return (
-    <div style={{ width: '100%', height: '100%' }}>
+    <div style={{ height: '100%' }}>
       {[...Array(16)].map((y, i) =>
         [...Array(8)].map((x, j) =>
           <div
-              key={'wrap' + i * 8 + j}
-            >
+            key={'wrap' + i * 8 + j}
+          >
             <div
-              style={{ position: 'absolute', left: i * 105, top: j * 115, width: 105, height: 115, border: '1px solid rgb(0,0,100)', }}
+              style={{
+                position: 'absolute',
+                left: i * cell_width,
+                top: j * cell_height,
+                width: cell_width,
+                height: cell_height,
+                border: '1px solid rgb(0,0,100)',
+                background: 'gray'
+              }}
               key={-i * 8 - j - 1}
-              >
+            >
             </div>
             <Hex7
               rules={rules}
@@ -254,7 +265,7 @@ export const Rules = ({ rules, setRules, shouldUseRuleA, }: IRules) => {
 
       }
 
-    </div>
+    </div >
   );
 }
 
