@@ -288,6 +288,8 @@ function App() {
         updateColor={updateColor}
       />*/}
       <Header isExpanded={false}>
+
+        {/* rows, cols, speed not yet implemented with new canvas
         <RowsInput
           placeholder={numRows.toString()}
           onChange={(e) => e.target.value}
@@ -321,7 +323,7 @@ function App() {
           }}
         />
         <Interval> speed </Interval>
-
+        */}
         <StartButton isIterating={shouldIterate} onClick={() => setShouldIterate(!shouldIterate)}><b>p</b>{shouldIterate ? 'ause' : 'lay'}</StartButton>
         <NextButton onClick={() => {
           update();
