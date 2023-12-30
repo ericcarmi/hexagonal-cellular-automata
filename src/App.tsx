@@ -335,8 +335,9 @@ function App() {
         }
         }><b>c</b>lear</ResetButton>
         <BoundaryButton onClick={(e) => updateBoundary(e.shiftKey ? false : true)} isIterating={shouldIterate}><b>b</b>order</BoundaryButton>
-        <Button style={{ left: 440 }} onClick={() => setIsHexagonNotDragon((prev) => !prev)} isIterating={false}>{isHexagonNotDragon ? 'hexagons' : 'dragons'}</Button>
-        <Button style={{ left: 1200 }} onClick={() => setIsCellularAutomata((prev) => !prev)} isIterating={false}>{isCellularAutomata ? 'cells' : 'macro'}</Button>
+        {/* removing dragons button since changing to canvas...
+        <Button style={{ left: 440 }} onClick={() => setIsHexagonNotDragon((prev) => !prev)} isIterating={false}>{isHexagonNotDragon ? 'hexagons' : 'dragons'}</Button>*/}
+        <Button style={{ left: 1200 }} onClick={() => setIsCellularAutomata((prev) => !prev)} isIterating={false}>{isCellularAutomata ? 'cells' : 'ising'}</Button>
         <Button className="show rule button" style={{ left: 1550 }} onClick={() => setShowRules((prev) => !prev)}><b>r</b>ules</Button>
         <Button style={{ textDecoration: shouldUseRuleA ? 'underline' : '', left: 1330 }} onClick={() => setShouldUseRuleA(true)} >{'rule A'}</Button>
         <Button style={{ textDecoration: !shouldUseRuleA ? 'underline' : '', left: 1440 }} onClick={() => setShouldUseRuleA(false)} >{'rule B'}</Button>

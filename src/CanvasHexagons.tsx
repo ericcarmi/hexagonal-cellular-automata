@@ -50,19 +50,28 @@ export const Canvas = ({
 
   useEffect(() => {
     if (shouldReset) {
-      // only center
-      hexagons = Array(numRows * numCols).fill(false).map((_, i) => i == numCols * numRows / 2 + numCols / 2);
-      smoothHexagons = Array(numRows * numCols).fill(false).map((_, i) => i == numCols * numRows / 2 + numCols / 2 ? 1 : 0);
+      if (isCellular) {
+        // only center
+        hexagons = Array(numRows * numCols).fill(false).map((_, i) => i == numCols * numRows / 2 + numCols / 2);
+        smoothHexagons = Array(numRows * numCols).fill(false).map((_, i) => i == numCols * numRows / 2 + numCols / 2 ? 1 : 0);
+        // bottom left
+        // hexagons = Array(numRows * numCols).fill(false).map((_, i) => i == numCols * numRows - numCols);
+        // smoothHexagons = Array(numRows * numCols).fill(false).map((_, i) => i == numRows ? 1 : 0);
 
-      // strip
-      // hexagons = Array(numRows * numCols).fill(false).map((_, i) => i > numCols * numRows / 3 && i < numCols * numRows / 1.5);
+        // strip
+        // hexagons = Array(numRows * numCols).fill(false).map((_, i) => i > numCols * numRows / 3 && i < numCols * numRows / 1.5);
 
-      // random
-      hexagons = Array.from({ length: numCols * numCols }, () => Math.random() > 0.53 ? true : false);
-      smoothHexagons = Array.from({ length: numCols * numCols }, () => Math.random() > 0.53 ? 1 : 0);
+      }
+      else {
+        // random
+        hexagons = Array.from({ length: numCols * numCols }, () => Math.random() > 0.53 ? true : false);
+        smoothHexagons = Array.from({ length: numCols * numCols }, () => Math.random() > 0.53 ? 1 : 0);
+
+      }
       setShouldReset(false);
+
     }
-  }, [shouldReset, setShouldReset])
+  }, [shouldReset, setShouldReset, isCellular])
 
 
   useEffect(() => {
@@ -169,6 +178,9 @@ const checkNeighbors = (rules: any, shouldIterate: boolean, shouldReset: boolean
 
     let stayAlive = false;
     let smoothAlive = 0
+
+    const Hfield = -0.0;
+    const decay = 0.9
     if (isCellular) {
       stayAlive = rules[neighbors as keyof typeof rules] === '1' ? true : false
 
@@ -177,12 +189,12 @@ const checkNeighbors = (rules: any, shouldIterate: boolean, shouldReset: boolean
       if (total_sum > numRows * numCols / 2) {
         // stayAlive = num_neighbors == 3 || num_neighbors == 4 || num_neighbors == 5  ? true : false
         stayAlive = num_neighbors > 3 ? true : false
-        smoothAlive = num_neighbors > 3 ? 1 : smoothHexagons[i] * 0.99
+        smoothAlive = num_neighbors > 3 ? 1 : smoothHexagons[i] * decay + Hfield
       }
       else {
         // stayAlive = num_neighbors == 4 ||num_neighbors == 5 ||num_neighbors == 6 ? true : false
-        stayAlive = num_neighbors > 2 && num_neighbors < 7 ? true : false
-        smoothAlive = num_neighbors > 2 && num_neighbors < 7 ? 1 : smoothHexagons[i] * 0.99
+        stayAlive = num_neighbors > 2 ? true : false
+        smoothAlive = num_neighbors > 2 ? 1 : smoothHexagons[i] * decay  + Hfield
 
       }
     }
@@ -223,7 +235,7 @@ const draw = (ctx: any, frameCount: any, shouldClear: boolean, isCellular: boole
       ctx.fillStyle = `rgb(${color}, ${color}, ${color})`;
     }
     else {
-      ctx.fillStyle = hexagons[i] ? fills[0] : fills[1]
+      ctx.fillStyle = hexagons[i] ? fills[1] : fills[0]
     }
 
 
