@@ -255,6 +255,7 @@ function App() {
     // not handling pressing and holding yet...no it does, but it isn't a smooth update
     function handleKeyDown(e: any) {
       const k = e.key?.toLowerCase();
+
       switch (k) {
         case 'n': update(); setShouldStepOnce(true); break;
         case 'p': setShouldIterate((prev) => !prev); break;
@@ -356,9 +357,9 @@ function App() {
         isCellular={isCellularAutomata}
 
       />
-      {<div style={{ zIndex: showRules ? 1 : -1, top: 30, position: 'absolute' }}>
+      {showRules && (<div style={{ zIndex: showRules ? 1 : -1, top: 30, position: 'absolute' }}>
         <Rules rules={rules} setRules={setRules} shouldUseRuleA={shouldUseRuleA} />
-      </div>}
+      </div>)}
 
     </div>
   );
